@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Analyses</title>
+<meta name="description" content="Analyses chiffrées et sourcées sur des questions de politique publique en France : arrêts maladie, médias, salaires.">
+<script>try{if(localStorage.getItem('theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
+<style>
+:root{
+  color-scheme:dark;
+  --plane:#0d0d0d; --surface:#1a1a19;
+  --ink:#ffffff; --ink-2:#c3c2b7; --ink-muted:#898781;
+  --grid:#2c2c2a; --axis:#383835;
+  --acc:#3987e5;
+}
+:root[data-theme="light"]{
+  color-scheme:light;
+  --plane:#f9f9f7; --surface:#fcfcfb;
+  --ink:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7;
+  --acc:#2a78d6;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--plane);color:var(--ink);font:400 16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-text-size-adjust:100%}
+.wrap{max-width:860px;margin:0 auto;padding:32px 20px 56px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:28px}
+h1{font-size:1.6rem;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
+.lede{margin:0;color:var(--ink-2);max-width:60ch}
+.theme{font:inherit;font-size:.8rem;color:var(--ink-2);background:transparent;flex:none;border:1px solid var(--axis);border-radius:999px;padding:5px 12px;cursor:pointer}
+.theme:hover,.theme:focus-visible{color:var(--ink);border-color:var(--ink-muted)}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.card{position:relative;background:var(--surface);border:1px solid var(--grid);border-radius:12px;padding:18px 20px;transition:border-color .15s ease}
+.card:hover,.card:focus-within{border-color:var(--ink-muted)}
+.topic{font-size:.75rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);margin:0 0 6px}
+h2{font-size:1.2rem;line-height:1.3;margin:0 0 8px;letter-spacing:-.005em}
+h2 a{color:inherit;text-decoration:none}
+h2 a::after{content:"";position:absolute;inset:0;border-radius:12px}
+h2 a:focus-visible{outline:none}
+.card:has(h2 a:focus-visible){outline:2px solid var(--acc);outline-offset:2px}
+.desc{margin:0 0 10px;color:var(--ink-2)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0;font-size:.85rem;color:var(--ink-muted)}
+.meta a{position:relative;z-index:1;color:var(--acc)}
+footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--grid);font-size:.85rem;color:var(--ink-muted)}
+@media(max-width:600px){.wrap{padding:22px 14px 40px}header{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Analyses</h1>
+      <p class="lede">Questions de politique publique en France, traitées à partir de données publiques et de la littérature : chaque page donne ses sources, sa méthode et ses limites.</p>
+    </div>
+    <button type="button" class="theme" id="theme" aria-pressed="false">Thème clair</button>
+  </header>
+
+  <main>
+    <ul>
+      <li class="card">
+        <p class="topic">Protection sociale</p>
+        <h2><a href="arrets-maladie/">Auto-déclaration des arrêts maladie courts : quel taux d’arrêts injustifiés reste compatible avec un bilan nul ?</a></h2>
+        <p class="desc">Modèle interactif de ce que rapporteraient l’auto-déclaration des arrêts de trois jours au plus et la suppression des jours de carence (consultations évitées, contaminations en moins), confronté aux absences supplémentaires mesurées par les études françaises et étrangères.</p>
+        <p class="meta"><span>16 novembre 2026</span><span>62 références</span><a href="arrets-maladie/modele_autodeclaration.xlsx" download>Télécharger le modèle Excel</a></p>
+      </li>
+      <li class="card">
+        <p class="topic">Médias</p>
+        <h2><a href="medias-cdjm/">Être orienté, ce n’est pas se tromper</a></h2>
+        <p class="desc">Ce que le Conseil de déontologie journalistique (CDJM) et l’Arcom reprochent à 20 sites d’information français, et ce qu’ils ne leur reprochent pas : 137 avis relevés, distinction entre orientation éditoriale et inexactitudes.</p>
+        <p class="meta"><span>Relevé arrêté au 20 octobre 2026</span><span>Données : CDJM, Arcom, ACPM</span></p>
+      </li>
+      <li class="card">
+        <p class="topic">Travail et salaires</p>
+        <h2><a href="salaires-cout-employeur/">Ce que gagne un salarié, ce qu’il coûte</a></h2>
+        <p class="desc">Distribution interactive des salaires nets et du coût total employeur dans le secteur privé, en équivalent temps plein, avec le détail des cotisations salariales et patronales selon la taille de l’entreprise.</p>
+        <p class="meta"><span>Données 2021</span><span>Sources : Insee, Urssaf</span></p>
+      </li>
+    </ul>
+  </main>
+
+  <footer>Les pages s’ouvrent dans tout navigateur, sur ordinateur comme sur téléphone. Le choix de thème est conservé d’une page à l’autre.</footer>
+</div>
+<script>
+const themeBtn = document.getElementById('theme');
+let theme = 'dark';
+try { theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark'; } catch (e) {}
+function applyTheme() {
+  const light = theme === 'light';
+  if (light) document.documentElement.setAttribute('data-theme', 'light');
+  else document.documentElement.removeAttribute('data-theme');
+  themeBtn.textContent = light ? 'Thème sombre' : 'Thème clair';
+  themeBtn.setAttribute('aria-pressed', String(light));
+}
+applyTheme();
+themeBtn.addEventListener('click', () => {
+  theme = theme === 'light' ? 'dark' : 'light';
+  try { localStorage.setItem('theme', theme); } catch (e) {}
+  applyTheme();
+});
+</script>
+</body>
+</html>

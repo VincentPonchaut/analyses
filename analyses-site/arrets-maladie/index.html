@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Seuil d’arrêts injustifiés</title>
+<script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("theme")==="light"?"light":"dark")}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE journal article with an interactive figure, neutral and sourced
+   IDEA a methods note: abstract, live model, evidence, equations, parameter table, limits, references
+   PICTURE the live result: gain before induced absences, threshold, net balance against measured effects, status quo vs reforms
+   COLOUR white ground, ink, ultramarine for gains, red for costs; night version deep navy
+   TYPE Spectral for titles and figures, Inter for text
+   LAYOUT one reading column for text; the model block breaks out wide with controls left, result right; phone: stacked, result first */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0d0e18);--ink:light-dark(#14110f,#e8e8ef);--mut:light-dark(#55524e,#a9a9b8);--card:light-dark(#f6f7fb,#161829);--line:light-dark(#dcdde6,#2a2d45);--gain:light-dark(#1d2bd8,#7d87ff);--cost:light-dark(#c62f2f,#ef6b6b);--acc:light-dark(#1d2bd8,#7d87ff);--faint:light-dark(#77746f,#8b8ba0);--mid:light-dark(#eceef6,#20233a)}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3,.fig-n,.big>b{font-family:Spectral,Georgia,serif;letter-spacing:-.01em}
+h1{font-size:clamp(30px,4vw,44px);line-height:1.1;margin:0 0 12px;text-wrap:balance;font-weight:600}
+h2{font-size:24px;line-height:1.2;margin:0 0 12px;font-weight:600}
+h3{font-size:18px;margin:18px 0 6px;font-weight:600}
+p{margin:0 0 12px}
+a{color:var(--acc)}
+.band{padding:clamp(22px,3.5vw,44px) max(5vw,16px)}
+.col{max-width:820px;margin:0 auto}
+.wide{max-width:1240px;margin:0 auto}
+.meta{color:var(--mut);font-size:14px}
+.abs{border-left:3px solid var(--acc);padding-left:16px}
+.abs p{margin-bottom:8px}
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:24px;align-items:start}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.ctl{display:grid;gap:16px}
+.res{display:grid;gap:16px}
+@media(min-width:901px){.res{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;scrollbar-width:thin}}
+.seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;background:var(--mid);padding:5px;border-radius:10px}
+.seg input{position:absolute;opacity:0}
+.seg label{display:block;padding:10px 10px;border-radius:8px;cursor:pointer;font-size:14px;line-height:1.3;min-height:44px}
+.seg label small{color:var(--faint);font-size:12px}
+.seg input:checked+label{background:var(--bg);box-shadow:0 0 0 1px var(--line);font-weight:600}
+.seg input:focus-visible+label{outline:2px solid var(--acc)}
+.chk{display:flex;gap:10px;align-items:center;margin-top:10px;font-size:15px;min-height:32px}
+.chk input{width:20px;height:20px;accent-color:var(--gain)}
+.eff{margin:2px 0 4px 30px;font-size:13px;line-height:1.4;color:var(--faint)}
+.eff b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.cmp tr.hl td{font-weight:600}
+@media(prefers-reduced-motion:no-preference){.cmp tr.flash td{animation:fl 1.2s ease}@keyframes fl{0%{background:color-mix(in srgb,var(--acc) 28%,transparent)}100%{background:transparent}}}
+.note{margin:12px 0 0;font-size:13px;color:var(--faint);border-top:1px solid var(--line);padding-top:10px}
+.sl{display:grid;gap:4px;padding:10px 0;border-top:1px solid var(--line)}
+.sl .row{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.sl label{font-size:15px;font-weight:500}
+.sl output{font-weight:600;white-space:nowrap;font-variant-numeric:tabular-nums}
+.sl small{color:var(--faint);font-size:13px;line-height:1.35}
+.sl.sep{border-top:2px solid var(--line);margin-top:6px}
+.off{opacity:.45}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;font-size:14px}
+.topbar a{color:var(--mut);text-decoration:none}
+.topbar a:hover{color:var(--ink)}
+.themeb{min-height:32px;padding:4px 12px;border-radius:999px;font-size:13px;color:var(--mut)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.88em;background:var(--mid);padding:1px 5px;border-radius:4px;font-style:normal;white-space:nowrap}
+a.rf{text-decoration:none;border-bottom:1px dotted currentColor}
+@media(prefers-reduced-motion:no-preference){.chg{animation:chg 1.1s ease;border-radius:4px}@keyframes chg{0%{background:color-mix(in srgb,var(--acc) 40%,transparent)}100%{background:transparent}}}
+.tipw{position:relative;display:inline-block}
+.tipb{display:inline-grid;place-items:center;width:18px;height:18px;min-height:0;padding:0;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--mut);font:600 11px/1 Inter,system-ui,sans-serif;font-style:normal;cursor:help;vertical-align:middle}
+.tipbox{display:none;position:absolute;left:0;top:100%;z-index:20;width:min(380px,78vw);padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:13px;font-weight:400;line-height:1.45;box-shadow:0 8px 28px rgba(0,0,0,.18);white-space:normal;text-align:left;cursor:default}
+.tipbox b{font-weight:600}
+.tipbox br{display:block;content:"";margin-top:6px}
+.tipw:hover>.tipbox,.tipw:focus-within>.tipbox{display:block}
+input[type=range]{width:100%;height:32px;accent-color:var(--acc);cursor:pointer}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+button{font:inherit;font-size:14px;min-height:44px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+button:hover{border-color:var(--ink)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.dz{border-top:1px solid var(--line);padding:12px 0 4px}
+.dzh{display:flex;gap:10px;align-items:center;font-weight:600;font-size:15px;min-height:32px}
+.dzh input{width:20px;height:20px;accent-color:var(--gain)}
+.dzg{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.6em,1fr));gap:8px 10px;margin:8px 0 6px}
+.dzg label{display:grid;gap:2px;font-size:12.5px;color:var(--mut);line-height:1.25}
+.dzg input{width:100%;font:inherit;font-size:16px;padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+.dz .fn{margin:0 0 6px;line-height:1.4}
+.dz.dis-off .dzg{opacity:.45}
+.big{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 18px;align-items:center}
+.big>b{font-size:clamp(54px,7.5vw,84px);line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+.big p{margin:0}
+.gauge{position:relative;height:14px;border-radius:7px;background:color-mix(in srgb,var(--cost) 25%,var(--mid));margin:22px 0 6px}
+.gauge i{position:absolute;inset:0 auto 0 0;border-radius:7px 0 0 7px;background:var(--gain)}
+.gauge em{position:absolute;top:-8px;width:3px;height:30px;margin-left:-1.5px;background:var(--ink);border-radius:2px}
+.ticks{display:flex;justify-content:space-between;font-size:13px;color:var(--mut);font-variant-numeric:tabular-nums}
+.k3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.kb{display:grid;gap:4px;align-content:start}
+.kl{font-size:13px;font-weight:600;color:var(--mut)}
+.kn{font-family:Spectral,Georgia,serif;font-size:clamp(26px,2.3vw,34px);line-height:1.1;font-weight:600;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kb small{font-size:13px;color:var(--faint);line-height:1.4}
+.sel2{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:16px}
+.sel2 label{display:grid;gap:4px;font-size:13px;font-weight:600;color:var(--mut)}
+select{font:inherit;font-size:15px;text-overflow:ellipsis;min-height:44px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);width:100%}
+.verdict{margin-top:16px;padding-top:14px;border-top:2px solid var(--line)}
+@media(max-width:600px){.k3{grid-template-columns:minmax(0,1fr)}}
+.fig-n{font-size:34px;font-weight:600;line-height:1.15;margin-bottom:6px;font-variant-numeric:tabular-nums}
+.sm{font-size:13px;color:var(--faint);line-height:1.45}
+.bars{display:grid;gap:10px}
+.br{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr) 6.5em;gap:10px;align-items:center;font-size:14px}
+.br small{display:block;color:var(--faint);font-size:12.5px;line-height:1.35}
+.br .tr{position:relative;height:22px;background:linear-gradient(90deg,transparent calc(50% - 1px),var(--line) calc(50% - 1px),var(--line) calc(50% + 1px),transparent calc(50% + 1px))}
+.br .tr span{position:absolute;top:3px;bottom:3px;border-radius:4px}
+.br .v{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+.br.tot{border-top:1px solid var(--line);padding-top:8px;font-weight:600}
+.empty{color:var(--mut);font-size:14px;margin:0}
+.cmp{width:100%;border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+.cmp th,.cmp td{padding:7px 6px;border-top:1px solid var(--line);text-align:right;vertical-align:top}
+.cmp th:first-child,.cmp td:first-child{text-align:left}
+.cmp thead th{border-top:0;color:var(--mut);font-weight:500;font-size:13px;line-height:1.3}
+.cmp td small{display:block;color:var(--faint);font-size:12px}
+.cmp .sel{background:color-mix(in srgb,var(--acc) 9%,transparent)}
+.cmp thead th.sel{color:var(--ink);font-weight:600}
+.eq{font-family:Spectral,Georgia,serif;font-size:16px;background:var(--mid);border-radius:8px;padding:12px 14px;overflow-x:auto}
+.eq div{white-space:nowrap;padding:2px 0}
+.eq div.wr{white-space:normal}
+.mbar{display:none}
+.scroll{overflow-x:auto}
+table.t{width:100%;border-collapse:collapse;font-size:14px}
+.t th,.t td{text-align:left;padding:7px 6px;border-top:1px solid var(--line);vertical-align:top}
+.t th{color:var(--mut);font-weight:500;border-top:0}
+.t td.n{white-space:nowrap;font-variant-numeric:tabular-nums}
+.t tr.grp td{font-weight:600;color:var(--mut);font-size:13px;padding-top:14px}
+.tag{font-size:12px;padding:1px 7px;border-radius:99px;border:1px solid var(--line);white-space:nowrap;color:var(--mut)}
+ol.refs{padding-left:24px;font-size:13px;color:var(--faint)}
+ol.refs li{margin-bottom:6px}
+ul{margin:0 0 12px;padding-left:20px}
+li{margin-bottom:6px}
+.fn{font-size:13px;color:var(--faint)}
+.t td:nth-child(3){font-size:13px;color:var(--faint)}
+.t.ev td:nth-child(2){font-size:14px;color:var(--ink)}
+.t.ev td.n{white-space:normal}
+@media(max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}.res{order:-1}.mbar{display:block;position:sticky;top:0;z-index:5;background:var(--ink);color:var(--bg);padding:10px max(5vw,16px);font-weight:600;font-size:15px}}
+@media(max-width:600px){.seg{grid-template-columns:minmax(0,1fr)}.br{grid-template-columns:minmax(0,1fr) 6em}.br .lb{grid-column:1/-1}.big{grid-template-columns:minmax(0,1fr)}table.t{font-size:13px}.card{padding:14px}.cmp{font-size:12.5px;table-layout:fixed}.cmp th:first-child{width:31%}.cmp th,.cmp td{padding:6px 2px;overflow-wrap:anywhere}.cmp td small{overflow-wrap:normal}.stack thead{display:none}.stack tr{display:grid;padding-block:8px;border-top:1px solid var(--line)}.stack td{display:flex;justify-content:space-between;gap:12px;border:0;padding:2px 0}.stack td::before{content:attr(data-l);color:var(--mut);flex:none;max-width:45%}.t.ev td{display:block}.t.ev td::before{display:block;max-width:none}}
+@media(prefers-reduced-motion:no-preference){.gauge i,.gauge em,.br .tr span{transition:all .25s ease}}
+</style>
+</head>
+<body>
+<div class="mbar" id="mbar" aria-live="polite">Seuil d’équilibre : …</div>
+
+<header class="band" style="padding-bottom:0">
+  <div class="col">
+    <div class="topbar"><a href="../">← Toutes les analyses</a><button type="button" class="themeb" id="themeBtn">Thème clair</button></div>
+    <h1>Auto-déclaration des arrêts maladie de courte durée : quel taux d’arrêts injustifiés reste compatible avec un bilan nul ?</h1>
+    <p class="meta">Note méthodologique avec modèle interactif, version 4 · Recherche documentaire et calculs : Claude Opus 5.5 puis Claude Fable 5.2 (Anthropic) · 16 novembre 2026 · <a href="modele_autodeclaration.xlsx" download>Télécharger le modèle Excel</a></p>
+    <div class="abs">
+      <p><b>Contexte.</b> « L’Avenir en commun » (2027) prévoit l’auto-déclaration des arrêts de courte durée, la suppression des jours de carence et une indemnisation à 100 % du salaire [1]. Le programme ne précise ni la durée couverte par l’auto-déclaration (trois jours sont retenus ici), ni le financeur des trois premiers jours.</p>
+      <p><b>Méthode.</b> Écart annuel avec la situation actuelle, en journées de travail et en euros, pour l’ensemble Assurance maladie, employeurs et salariés. Le gain (consultations évitées, contaminations évitées au travail et dans les foyers, nettes de la production perdue quand un salarié malade s’arrête au lieu de travailler malade) est dérivé de paramètres publiés. Pour la grippe, l’infectiosité décroît après le début des symptômes [57] et une baisse de transmission se propage au reste de l’épidémie [56]. Ce gain est ensuite confronté aux absences supplémentaires mesurées là où le certificat ou la carence ont été modifiés [20, 32, 39–43, 45], en séparant l’effet de l’auto-déclaration de celui de la suppression de la carence. Les indemnités sont des transferts entre payeurs : elles n’entrent pas dans le bilan collectif et sont suivies à part. Les paramètres sans source empirique sont signalés.</p>
+      <p><b>Résultats.</b> <span id="absR"></span></p>
+      <p><b>Conclusion.</b> <span id="absC"></span></p>
+    </div>
+  </div>
+</header>
+
+<main class="band">
+  <div class="wide">
+    <h2>Modèle interactif</h2>
+    <div class="grid">
+      <section class="ctl" aria-label="Paramètres">
+        <div class="card">
+          <h3 style="margin-top:0">Scénario</h3>
+          <div class="seg" role="radiogroup" aria-label="Scénario">
+            <input type="radio" name="reg" id="reg0" value="0"><label for="reg0">On ne change rien<br><small>référence</small></label>
+            <input type="radio" name="reg" id="regA" value="A"><label for="regA">Auto-déclaration, carence maintenue</label>
+            <input type="radio" name="reg" id="regB" value="B" checked><label for="regB">Auto-déclaration, carence supprimée<br><small>« L’Avenir en commun »</small></label>
+          </div>
+          <label class="chk" id="ijWrap"><input type="checkbox" id="ij100"> Indemnités journalières à 100 % du salaire (au lieu de 50 %)</label>
+          <p class="eff" id="ijEff"></p>
+          <label class="chk" id="secWrap"><input type="checkbox" id="sec100"> Consultations remboursées à 100 % par l’Assurance maladie</label>
+          <p class="eff" id="secEff"></p>
+          <p class="note" id="payers"></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Paramètres</h3>
+          <div class="presets"><button type="button" data-p="prudent">Hypothèses défavorables</button><button type="button" data-p="central">Hypothèses centrales</button><button type="button" data-p="fav">Hypothèses favorables</button></div>
+          <p class="note" style="border:0;padding:0;margin:4px 0 6px">Seuls varient les paramètres dont la source donne un intervalle, ou dont l’intervalle est logique. Défavorables : <code>t</code> 0, <code>c</code> 0 %, <code>w</code> 9 %, <code>R</code> 1,37, <code>θ</code> grippe 50 %, <code>θ</code> gastro-entérite 20 %, <code>x</code> 0,54 j, <code>m</code> 0 %, <code>y</code> 0,85 j. Favorables : <code>t</code> 0,5 j, <code>c</code> 100 %, <code>w</code> 33 %, <code>R</code> 1,19, <code>a</code> 62 %, <code>θ</code> 5 % et 0 %, <code>x</code> 0, <code>m</code> 100 %, <code>y</code> −0,3 j. <code>β</code>, <code>h</code>, <code>q</code>, <code>d</code> et <code>J</code> fixes.</p>
+          <div id="sliders"></div>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Maladies contagieuses</h3>
+          <div id="dis"></div>
+        </div>
+      </section>
+
+      <section class="res" aria-live="polite">
+        <div class="card" id="keyCard">
+          <h3 style="margin-top:0">La mesure en trois chiffres</h3>
+          <div class="k3">
+            <div class="kb"><span class="kl">① Ce que rapporte la mesure, par an</span><b class="kn" id="gBig" style="color:var(--gain)">…</b><small id="gSub"></small></div>
+            <div class="kb"><span class="kl">② Ce qu’elle peut se permettre</span><b class="kn" id="fBig">…</b><small id="fTxt"></small></div>
+            <div class="kb"><span class="kl">③ Ce que prévoient les études</span><b class="kn" id="oBig" style="color:var(--cost)">…</b><small id="oSub"></small></div>
+          </div>
+          <div class="sel2">
+            <label>Étude retenue pour l’effet de l’auto-déclaration<select id="selX"></select></label>
+            <label id="selYw">Étude retenue pour l’effet de la suppression de la carence<select id="selY"></select></label>
+          </div>
+          <div class="gauge" id="gauge" aria-hidden="true"><i id="gFill"></i><em id="gMark"></em><em id="gObs" style="background:var(--cost)"></em></div>
+          <div class="ticks" id="gTicks"></div>
+          <p class="sm" id="gLeg" style="margin:6px 0 0">Trait noir : ce que la mesure peut se permettre (②). Trait rouge : ce que prévoient les études retenues (③). Unité : part des arrêts courts qui seraient injustifiés.</p>
+          <div class="verdict"><span class="kl">Résultat par an : ① moins le coût de ③</span><div class="fig-n" id="netBig">…</div><p class="sm" id="netTxt"></p></div>
+          <p class="note" id="netNote"></p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0" id="barsH">Détail de ce que rapporte la mesure (M€/an)</h3>
+          <div class="bars" id="bars"></div>
+          <p class="note">Tout est mesuré par rapport à la situation actuelle. Aujourd’hui, une partie des salariés malades travaillent malades, à productivité réduite : en attendant un certificat, ou parce qu’ils ne s’arrêtent pas. Avec la réforme, certains s’arrêtent plus tôt. Deux effets en sens contraire : ils contaminent moins (journées regagnées chez ceux qui ne tombent pas malades) et ils cessent de produire le travail partiel qu’ils fournissaient (journées en moins, comptées à la productivité q).</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Situation actuelle et réformes (par an)</h3>
+          <div class="seg" role="radiogroup" aria-label="Affichage" style="grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:10px">
+            <input type="radio" name="mode" id="modeD" value="d" checked><label for="modeD">Écart avec la situation actuelle</label>
+            <input type="radio" name="mode" id="modeA" value="a"><label for="modeA">Valeurs absolues</label>
+          </div>
+          <div class="scroll"><table class="cmp" id="cmp"></table></div>
+          <p class="note" id="absNote" hidden></p>
+          <p class="note">Journées perdues : absences et perte de productivité des salariés travaillant malades, en équivalent journée, pour les maladies cochées, avant absences supplémentaires. Solde de l’Assurance maladie : absences supplémentaires comprises. Les deux réformes ne diffèrent que par le financement des trois premiers jours ; l’effet de l’auto-déclaration (<code>β</code>, x) y est supposé identique, et la suppression de la carence ajoute son effet propre (y).</p>
+        </div>
+        <div class="card">
+          <h3 style="margin-top:0">Calcul avec les paramètres sélectionnés</h3>
+          <div class="eq" id="eq"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<section class="band" style="padding-top:0">
+  <div class="col">
+    <h2>Ce que mesurent les études</h2>
+    <p>Le modèle calcule un gain ; il ne peut pas prédire combien d’absences la mesure ajoutera. Cette grandeur a été mesurée ailleurs, sur des dispositifs voisins. Aucune étude ne porte sur la combinaison exacte proposée (auto-déclaration de trois jours sans plafond annuel, sans carence, à 100 % du salaire).</p>
+    <div class="scroll"><table class="t ev stack"><thead><tr><th>Dispositif étudié</th><th>Effet mesuré</th><th>Lecture pour le modèle</th></tr></thead><tbody>
+      <tr class="grp"><td colspan="3">Suppression ou report du certificat médical</td></tr>
+      <tr><td data-l="Dispositif">Belgique, 2022 : un jour sans certificat, trois fois par an, entreprises de 50 salariés ou plus, salaire maintenu [39]</td><td class="n" data-l="Effet">+0,12 absence d’un jour par travailleur et par an (+54 %). Aucune baisse des absences de 2 à 5 jours. Taux d’absence de courte durée sans variation significative.</td><td data-l="Lecture">Seule mesure directe et récente d’un dispositif proche ; fonde x central. Comparaison de 16 000 employeurs avant et après, entreprises de 5 à 49 salariés comme témoins. Rapport d’un prestataire, non publié en revue.</td></tr>
+      <tr><td data-l="Dispositif">Norvège, commune de Mandal, 2008 : auto-déclaration étendue, avec suivi par l’encadrement [41]</td><td class="n" data-l="Effet">Pas de hausse des absences ; une baisse est probable.</td><td data-l="Lecture">Fonde x = 0 (hypothèses favorables). Une seule commune, secteur public, suivi individuel renforcé ; résultat voisin à Kristiansand [54].</td></tr>
+      <tr><td data-l="Dispositif">Suède, 1988, essai randomisé sur 270 000 personnes : certificat exigé au 15ᵉ jour au lieu du 8ᵉ [40]</td><td class="n" data-l="Effet">+0,6 jour d’absence par arrêt ; moins de consultations, davantage d’indemnités versées.</td><td data-l="Lecture">Meilleure preuve qu’un contrôle médical plus tardif allonge les arrêts ; porte sur la deuxième semaine, non sur les trois premiers jours. Le nombre d’arrêts n’a pas changé, et la réponse se concentre sur une minorité de salariés [59].</td></tr>
+      <tr><td data-l="Dispositif">Portugal, 2023 : auto-déclaration de trois jours, deux fois par an, non rémunérée [44]</td><td class="n" data-l="Effet">539 000 déclarations en 2025 ; 600 000 consultations évitées par an selon l’estimation initiale.</td><td data-l="Lecture">Recoupe l’ordre de grandeur des consultations évitées. Aucune évaluation des absences.</td></tr>
+      <tr><td data-l="Dispositif">Revue Cochrane, 2019 [32]</td><td class="n" data-l="Effet">Davantage de temps de travail perdu dans plusieurs études ; certitude très faible.</td><td data-l="Lecture">Ne permet pas de trancher.</td></tr>
+      <tr><td data-l="Dispositif">Même revue : introduction d’une auto-déclaration de trois jours au plus, une étude avant-après avec groupe témoin [32]</td><td class="n" data-l="Effet">+0,54 jour perdu par personne et par an en absences de trois jours au plus ; durée moyenne de ces absences −0,32 jour.</td><td data-l="Lecture">Dispositif le plus proche de la proposition par sa définition ; fonde x défavorable. Étude ancienne, certitude très faible selon la revue.</td></tr>
+      <tr><td data-l="Dispositif">Norvège, commune de Kristiansand, 2002 : auto-déclaration jusqu’à 50 jours par an, entretien avec l’employeur au 5ᵉ jour [54]</td><td class="n" data-l="Effet">Certificats médicaux divisés par deux pour les arrêts de moins d’une semaine ; durée moyenne des absences courtes −0,8 jour.</td><td data-l="Lecture">Fonde a = 50 %. Les absences auto-déclarées ne sont pas plus longues que les absences certifiées.</td></tr>
+      <tr class="grp"><td colspan="3">Jours de carence et niveau d’indemnisation</td></tr>
+      <tr><td data-l="Dispositif">France, Éducation nationale, 2018 : un jour de carence [42]</td><td class="n" data-l="Effet">−22,6 % d’épisodes : −44 % pour ceux d’un jour, −26 % pour deux jours, −25 % pour trois jours, −12 % de 4 à 7 jours, −1 % de 15 jours à 3 mois, effet non significatif au-delà. −5,1 % de jours. Pas d’effet détecté sur la santé perçue ni sur les soins.</td><td data-l="Lecture">Meilleure identification disponible en France (880 000 agents, données exhaustives). Fonde y central : 5,1 % de 6,9 jours, soit 0,35 jour par agent et par an. Un seul jour de carence, contre trois dans le privé : minorant probable. L’autrice précise que les absences évitées ne sont pas nécessairement injustifiées.</td></tr>
+      <tr><td data-l="Dispositif">France, fonction publique de l’État, 2012-2013 : un jour de carence [43]</td><td class="n" data-l="Effet">Part d’agents absents inchangée ; absences de deux jours divisées par deux, absences d’une semaine à trois mois +25 %.</td><td data-l="Lecture">La carence déplacerait les absences vers des arrêts plus longs. Favorable à sa suppression ; non retrouvé en Belgique [39].</td></tr>
+      <tr><td data-l="Dispositif">France, salariés du privé, 2009 : carence indemnisée par l’employeur ou non [20]</td><td class="n" data-l="Effet">Même fréquence d’arrêt (29,2 % contre 28,7 %) ; 14,5 jours d’arrêt par an contre 21,3 chez les salariés arrêtés.</td><td data-l="Lecture">Effet estimé de la couverture : −2,8 jours par salarié et par an (IC 95 % : −5,3 à −0,3). Favorable à la suppression ; fonde y favorable, à la borne prudente (−0,3). Coupe transversale de 1 280 salariés, sans suivi dans le temps : l’autrice appelle à la prudence sur la causalité.</td></tr>
+      <tr><td data-l="Dispositif">Suède, 1987 : suppression du jour de carence et hausse de l’indemnité [45]</td><td class="n" data-l="Effet">Plus d’arrêts courts, moins d’arrêts longs ; total des jours d’absence en baisse.</td><td data-l="Lecture">Favorable. Réforme ancienne, combinant deux changements.</td></tr>
+      <tr><td data-l="Dispositif">Allemagne, 1996 : maintien du salaire ramené de 100 % à 80 % [52] ; Espagne, 2012 : forte baisse de l’indemnisation des agents publics [53]</td><td class="n" data-l="Effet">Allemagne : −5 % de jours d’absence. Espagne : moins de jours d’absence, mais forte hausse des rechutes et des accidents du travail.</td><td data-l="Lecture">Une indemnisation plus généreuse augmente les jours d’absence, comme dans l’Éducation nationale [42] ; une partie des absences évitées par une indemnisation moindre étaient médicalement utiles.</td></tr>
+      <tr><td data-l="Dispositif">France, enquête Conditions de travail 2016 [50]</td><td class="n" data-l="Effet">11 jours de maladie par salarié et par an, dont 3 travaillés (27 %) ; 83 % pour les salariés qui ne déclarent qu’un ou deux jours de maladie.</td><td data-l="Lecture">Les jours travaillés malade (environ 60 M par an dans le privé) dépassent de loin les absences supplémentaires attendues (2 à 11 M) : celles-ci peuvent être en grande partie justifiées, c’est-à-dire prises par des salariés malades qui, aujourd’hui, travaillent. Ne mesure pas m.</td></tr>
+      <tr><td data-l="Dispositif">France, contrôles de l’Assurance maladie, 2008 [51]</td><td class="n" data-l="Effet">13 % des arrêts de moins de 45 jours contrôlés étaient injustifiés ou trop longs.</td><td data-l="Lecture">Contrôles ciblés sur des arrêts certifiés par un médecin : ordre de grandeur, non transposable aux absences auto-déclarées.</td></tr>
+      <tr><td data-l="Dispositif">États-Unis, congés maladie payés obligatoires [12, 46] ; Allemagne, baisse de l’indemnisation [46]</td><td class="n" data-l="Effet">−11 % de syndromes grippaux la première année aux États-Unis [12]. En Allemagne, les arrêts pour maladies contagieuses réagissent moins à l’indemnisation que les autres [46].</td><td data-l="Lecture">Confirme l’existence de contaminations évitées ; les salariés américains partaient d’une absence de couverture, contre deux tiers de couverts en France [19].</td></tr>
+    </tbody></table></div>
+    <p class="fn">Conversion. x (auto-déclaration) : 0,12 jour par salarié du privé et par an reprend l’effet belge, bien que le dispositif proposé soit plus large (trois jours, sans plafond annuel, petites entreprises comprises) ; 0,54 en hypothèses défavorables [32] ; 0 en hypothèses favorables [41]. y (carence) : 0,35 jour par salarié non couvert [42] ; 0,85 en hypothèses défavorables, soit 5,4 % des 16 jours d’arrêt annuels moyens d’un salarié du privé [2] ; −0,3 en hypothèses favorables [20].</p>
+
+    <h2 style="margin-top:28px">Méthode</h2>
+    <p>Toutes les grandeurs sont des écarts annuels avec la situation actuelle. Les journées déjà perdues aujourd’hui pour maladie (arrêts existants, et perte de productivité de ceux qui travaillent malades) figurent dans la situation de référence, à la ligne « Journées perdues » du tableau ; elles sont identiques dans tous les scénarios et s’annulent dans l’écart. Seul ce qui change est compté. Une contamination évitée est une suite de journées non perdues plus tard. Un salarié malade qui s’arrête alors qu’il travaillait malade perd, en plus, la production partielle qu’il fournissait : la fraction <code>q</code> d’une journée, puisque la fraction 1 − <code>q</code> était déjà perdue. Les deux termes sont comptés dans la même unité.</p>
+    <div class="eq">
+      <div><i>f*</i> = <i>F*</i> ⁄ (<i>S</i> + <i>F*</i>),  <i>F*</i> = <i>G</i> ⁄ (<i>d</i> · <i>J</i>)</div>
+      <div><i>G</i> = <i>S</i> · <i>a</i> · <i>P</i> + <i>J</i> · Σ<sub>m</sub> [ <i>A<sub>m</sub></i> (1 + <i>h</i> σ<sub>m</sub> <i>s<sub>m</sub></i>) <i>K<sub>m</sub></i> − <i>E′<sub>m</sub></i> · <i>q</i> · ( <i>p<sub>m</sub></i> <i>t</i> (1 − <i>c</i>) + <i>b<sub>m</sub></i> <i>D′<sub>m</sub></i> ) ]</div>
+      <div><i>A<sub>m</sub></i> = <i>N<sub>m</sub></i> · <i>w</i> · <i>r<sub>m</sub></i>,  <i>r<sub>m</sub></i> = (1 − θ<sub>m</sub>) · ( <i>p<sub>m</sub></i> <i>t</i> + <i>b<sub>m</sub></i> <i>D′<sub>m</sub></i> ) ⁄ ( <i>p<sub>m</sub></i> <i>t</i> + (1 − <i>p<sub>m</sub></i>) <i>D′<sub>m</sub></i> ),  <i>b<sub>m</sub></i> = min(β <i>p<sub>m</sub></i>, 1 − <i>p<sub>m</sub></i>)</div>
+      <div><i>K<sub>m</sub></i> = <i>p<sub>m</sub></i> [ <i>D<sub>m</sub></i> + <i>t</i> (1 − <i>q</i>) ] + (1 − <i>p<sub>m</sub></i>) <i>D′<sub>m</sub></i> (1 − <i>q</i>),  <i>E′<sub>m</sub></i> = <i>N<sub>m</sub></i> <i>s<sub>m</sub></i> − <i>A<sub>m</sub></i> (1 + <i>h</i> σ<sub>m</sub> <i>s<sub>m</sub></i>)</div>
+      <div>Grippe : <i>I</i>(<i>j</i>) = 1 − 2<sup>−<i>j</i></sup> remplace <i>j</i> dans <i>r</i> ; cas évités = <i>N</i> · min{ 1 − <i>z</i>(<i>R</i> (1 − <i>w r</i>)) ⁄ <i>z</i>(<i>R</i>) ; 11 % },  <i>z</i> = 1 − e<sup>−<i>R z</i></sup></div>
+      <div>Bilan net = <i>G</i> − [ <i>x</i> · <i>N<sub>s</sub></i> + <i>y</i> · (1 − 0,66) · <i>N<sub>s</sub></i> ] · <i>J</i> · [1 − <i>m</i> (1 − <i>q</i>)]</div>
+    </div>
+    <p class="fn"><code>S</code> : arrêts de 1 à 3 jours par an ; <code>a</code> : part des consultations correspondantes à visée uniquement administrative ; <code>P</code> : prix d’une consultation (30 €) ; <code>d</code> : durée d’un arrêt injustifié ; <code>J</code> : coût d’une journée de travail ; <code>N<sub>m</sub></code> : cas annuels de la maladie <code>m</code> ; <code>s<sub>m</sub></code> : part de salariés parmi les cas ; <code>w</code> : part des contaminations survenant au travail ; <code>p<sub>m</sub></code> : part des salariés malades qui s’arrêtent aujourd’hui ; <code>D<sub>m</sub></code> : durée de leur arrêt ; <code>D′<sub>m</sub></code> : jours de symptômes passés au travail par ceux qui ne s’arrêtent pas ; <code>t</code> : jours travaillés malade avant l’arrêt, faute de consultation immédiate ; <code>c</code> : part de l’arrêt avancé compensée par un retour avancé ; <code>β</code> : hausse relative du recours à l’arrêt ; <code>θ<sub>m</sub></code> : part de la transmission antérieure aux symptômes ou asymptomatique ; <code>σ<sub>m</sub></code> : taux d’attaque secondaire dans le foyer ; <code>h</code> : autres personnes du foyer ; <code>q</code> : productivité d’un salarié travaillant malade ; <code>x</code> : journées d’absence supplémentaires par salarié du privé et par an ; <code>N<sub>s</sub></code> : salariés du privé ; <code>m</code> : part de ces journées prises par des salariés réellement malades ; <code>y</code> : journées d’absence supplémentaires par salarié non couvert, dues à la suppression de la carence ; <code>R</code> : nombre de reproduction ; <code>z</code> : taux d’attaque.</p>
+    <p>Pour la gastro-entérite, <code>r<sub>m</sub></code> suppose une transmission répartie uniformément sur les jours de présence symptomatique, et seule la première génération de cas est comptée (travail, puis foyer). Pour la grippe, deux résultats publiés remplacent ces simplifications. L’excrétion virale se concentre sur les deux à trois premiers jours de maladie [57] : l’infectiosité est modélisée par une décroissance de demi-vie un jour, si bien qu’une présence au travail en début de maladie pèse davantage. Et une épidémie de nombre de reproduction <code>R</code> proche de 1 amplifie toute baisse de transmission : avec <code>R</code> = 1,28 [56], l’équation de taille finale donne environ 3 % de cas en moins pour 1 % de transmission en moins. Les revues de modèles trouvent le même ordre de grandeur : une réduction de moitié des contacts au travail abaisse le taux d’attaque de 23 % en médiane [58]. Ce mécanisme s’emballe quand les hypothèses favorables se cumulent : la baisse du nombre de cas de grippe est donc plafonnée à 11 %, l’effet observé la première année après l’instauration de congés maladie payés aux États-Unis [12], réforme plus large que celle étudiée ici.</p>
+    <p>Le rapport <code>ρ<sub>m</sub></code>, journées regagnées par journée de présence malade évitée, résume ces calculs ; un salarié malade qui s’arrête au lieu de travailler malade améliore le bilan si <code>ρ<sub>m</sub></code> &gt; <code>q</code>.</p>
+    <p>Les études mesurent des absences supplémentaires sans pouvoir dire lesquelles sont injustifiées. Le modèle les sépare donc en deux parts. Une absence injustifiée (salarié apte au travail) coûte une journée entière. Une absence justifiée (salarié malade qui, aujourd’hui, vient travailler) ne coûte que la fraction <code>q</code> d’une journée, puisque ce salarié ne produisait déjà qu’une partie de son travail habituel. <code>m</code> est la part des absences justifiées ; le seuil <code>f*</code> correspond au cas où toutes sont injustifiées (<code>m</code> = 0). <code>y</code> ne s’applique qu’aux 34 % de salariés aujourd’hui non indemnisés pendant la carence, et seulement si celle-ci est supprimée.</p>
+    <p>Assurance maladie : consultations évitées (19 €, ou 30 € si remboursement intégral) et indemnités évitées, moins, sans carence, les indemnités des journées d’arrêt gagnées par les salariés malades et des absences supplémentaires (x et y), et le transfert <code>T</code> = (8,4 M × 3 + <code>S</code> × 2) × <code>IJ</code> des trois premiers jours des arrêts existants. Ce transfert remplace pour 66 % des salariés une indemnisation aujourd’hui versée par l’employeur [19] ; pour les autres, c’est un revenu nouveau. Avec carence, un arrêt de trois jours au plus ne coûte rien à l’Assurance maladie.</p>
+
+    <h2 style="margin-top:28px">Paramètres et sources</h2>
+    <div class="scroll"><table class="t stack"><thead><tr><th>Paramètre</th><th>Valeur</th><th>Origine</th></tr></thead><tbody>
+      <tr class="grp"><td colspan="3">Arrêts, consultations, coûts</td></tr>
+      <tr><td data-l="Paramètre">Arrêts maladie indemnisés</td><td class="n" data-l="Valeur">8,4 M/an</td><td data-l="Origine">DREES-CNAM, 2023 [2]</td></tr>
+      <tr><td data-l="Paramètre">Part des arrêts de 1 à 3 jours</td><td class="n" data-l="Valeur">44 %</td><td data-l="Origine">DSN, AXA Datascope 2026 [3] ; d’où <code>S</code> ≈ 6,6 M <span class="tag">calcul</span>. Recoupement : 2,6 consultations par semaine et par généraliste pour des certificats d’absence courte, soit environ 6 M par an (19 médecins, étude citée par la Cour des comptes [47])</td></tr>
+      <tr><td data-l="Paramètre">Indemnité journalière moyenne</td><td class="n" data-l="Valeur">35,7 €</td><td data-l="Origine">10,2 Md€ pour 286 M de journées indemnisées en 2023 [2] <span class="tag">calcul</span> ; plafond 42,97 € depuis juillet 2026 [4]</td></tr>
+      <tr><td data-l="Paramètre">Journées d’arrêt maladie indemnisées</td><td class="n" data-l="Valeur">286 M/an</td><td data-l="Origine">Régime général, 2023 [2] ; sert à la sensibilité aux arrêts longs</td></tr>
+      <tr><td data-l="Paramètre">Consultation de médecine générale</td><td class="n" data-l="Valeur">30 € / 19 €</td><td data-l="Origine">Tarif / part Assurance maladie après participation forfaitaire [5]</td></tr>
+      <tr><td data-l="Paramètre">Activité de médecine générale libérale</td><td class="n" data-l="Valeur">240 M/an ; 4 800 actes par médecin</td><td data-l="Origine">Insee, 2023 [6] ; actes par généraliste libéral en 2025, panel DREES [34]</td></tr>
+      <tr><td data-l="Paramètre">Coût d’une journée de travail (<code>J</code>)</td><td class="n" data-l="Valeur">313 €</td><td data-l="Origine">Coût horaire moyen du travail 44,7 € [21] × 7 h <span class="tag">calcul</span></td></tr>
+      <tr><td data-l="Paramètre">Salariés indemnisés pendant la carence</td><td class="n" data-l="Valeur">66 %</td><td data-l="Origine">Dares, entreprises de 10 salariés ou plus, 2024 [19] ; les très petites entreprises, moins couvertes, sont hors champ</td></tr>
+      <tr><td data-l="Paramètre">Salariés du privé (<code>N<sub>s</sub></code>)</td><td class="n" data-l="Valeur">20,2 M</td><td data-l="Origine">Effectifs salariés du secteur privé, Urssaf, 2025 [55]</td></tr>
+      <tr class="grp"><td colspan="3">Comportements</td></tr>
+      <tr><td data-l="Paramètre">Jours travaillés malade avant l’arrêt (<code>t</code>)</td><td class="n" data-l="Valeur">0,14 j (0–0,5)</td><td data-l="Origine">51 % des demandes de rendez-vous pour symptômes n’aboutissent pas le jour même [30] × une journée d’attente × 27 % de jours de maladie travaillés [50] <span class="tag">dérivé</span>. 0,5 j si tous ceux qui attendent travaillent, 0 si aucun. Aucune mesure directe : c’est l’hypothèse dont dépend tout le gain de contagion</td></tr>
+      <tr><td data-l="Paramètre">Arrêt avancé compensé par un retour avancé (<code>c</code>)</td><td class="n" data-l="Valeur">50 % (0–100)</td><td data-l="Origine">Non mesuré ; bornes logiques : 0 si la durée maximale est déclarée systématiquement, 100 % si le retour est fixé par la guérison <span class="tag">hypothèse</span></td></tr>
+      <tr><td data-l="Paramètre">Hausse du recours à l’arrêt chez les malades (<code>β</code>)</td><td class="n" data-l="Valeur">1,7 %</td><td data-l="Origine">Salariés couverts pendant la carence : 29,2 % ont au moins un arrêt dans l’année, contre 28,7 % des non-couverts, écart non significatif [20]. Un jour de carence réduit de 23 % les épisodes dans l’Éducation nationale [42] : <code>β</code> pourrait être plus élevé pour le tiers de salariés non couverts</td></tr>
+      <tr><td data-l="Paramètre">Absences supplémentaires dues à l’auto-déclaration, justifiées ou non (<code>x</code>)</td><td class="n" data-l="Valeur">0,12 j par salarié et par an (0–0,54)</td><td data-l="Origine">Belgique [39] ; 0 en Norvège [41] ; 0,54 pour l’introduction d’une auto-déclaration de trois jours [32]. Transposition à la France <span class="tag">hypothèse</span></td></tr>
+      <tr><td data-l="Paramètre">Effet propre de la suppression de la carence (<code>y</code>)</td><td class="n" data-l="Valeur">0,35 j par salarié non couvert et par an (−0,3 à 0,85)</td><td data-l="Origine">Éducation nationale : −5,1 % de jours avec un jour de carence, sur 6,9 jours par agent [42] <span class="tag">calcul</span> ; −0,3 : borne prudente de l’effet estimé dans le privé [20] ; 0,85 : même effet relatif appliqué aux 16 jours annuels d’un salarié du privé [2]. Transposition d’un jour de carence public à trois jours privés <span class="tag">hypothèse</span></tr>
+      <tr><td data-l="Paramètre">Part justifiée de ces absences : salariés réellement malades (<code>m</code>)</td><td class="n" data-l="Valeur">50 % (0–100)</td><td data-l="Origine">Non mesuré ; les auteurs des études belge et française soulignent qu’une hausse des arrêts courts n’est pas nécessairement un abus [39, 42] <span class="tag">hypothèse</span></td></tr>
+      <tr><td data-l="Paramètre">Productivité d’un salarié travaillant malade (<code>q</code>)</td><td class="n" data-l="Valeur">55 %</td><td data-l="Origine">Perte de productivité déclarée de 45 % les jours travaillés malade sur site, enquête auprès de 3 000 salariés danois [35] (communication de congrès) ; cohérent avec 69 % de temps de travail perdu, absences comprises, la semaine d’une grippe confirmée [38]</td></tr>
+      <tr><td data-l="Paramètre">Consultations à visée uniquement administrative (<code>a</code>)</td><td class="n" data-l="Valeur">50 % (50–62)</td><td data-l="Origine">Mesure directe : certificats pour arrêts de moins d’une semaine divisés par deux quand l’auto-déclaration est possible, Kristiansand [54]. 62 % par dérivation : 1 − part des malades qui consultent, 33 % des gastro-entérites aiguës [24], 37 à 42 % des syndromes grippaux [36]</td></tr>
+      <tr><td data-l="Paramètre">Durée d’un arrêt injustifié (<code>d</code>)</td><td class="n" data-l="Valeur">2 j</td><td data-l="Origine">Milieu de l’intervalle autorisé, 1 à 3 jours ; aucune mesure publiée <span class="tag">hypothèse</span></td></tr>
+      <tr><td data-l="Paramètre">Durée moyenne d’un arrêt de 1 à 3 jours (transfert <code>T</code>)</td><td class="n" data-l="Valeur">2 j</td><td data-l="Origine">Répartition par durée non publiée [3] ; milieu de l’intervalle <span class="tag">hypothèse</span></td></tr>
+      <tr class="grp"><td colspan="3">Transmission</td></tr>
+      <tr><td data-l="Paramètre">Contaminations survenant au travail (<code>w</code>)</td><td class="n" data-l="Valeur">16 % (9–33)</td><td data-l="Origine">Grippe, revue de modèles [10] ; appliqué aux autres maladies faute de donnée <span class="tag">hypothèse</span></td></tr>
+      <tr><td data-l="Paramètre">Nombre de reproduction, grippe (<code>R</code>)</td><td class="n" data-l="Valeur">1,28 (1,19–1,37)</td><td data-l="Origine">Médiane et intervalle interquartile des estimations pour la grippe saisonnière, revue systématique [56]</td></tr>
+      <tr><td data-l="Paramètre">Infectiosité après le début des symptômes, grippe</td><td class="n" data-l="Valeur">demi-vie 1 j</td><td data-l="Origine">L’essentiel de l’excrétion virale a lieu dans les deux à trois premiers jours [57] ; forme exponentielle <span class="tag">hypothèse</span></td></tr>
+      <tr><td data-l="Paramètre">Plafond de la baisse du nombre de cas de grippe</td><td class="n" data-l="Valeur">11 %</td><td data-l="Origine">Effet observé en population aux États-Unis [12] ; borne supérieure imposée au modèle <span class="tag">hypothèse</span></td></tr>
+      <tr><td data-l="Paramètre">Autres personnes du foyer (<code>h</code>)</td><td class="n" data-l="Valeur">1,2</td><td data-l="Origine">Ménages de 2,2 personnes [18]</td></tr>
+      <tr><td data-l="Paramètre">Réduction résultante (<code>r</code>), grippe</td><td class="n" data-l="Valeur" id="rRow">…</td><td data-l="Origine">Dérivée, non saisie. Repères : −25 % et −39 % de contaminations au travail pour un et deux jours d’absence payée en simulation [11] ; −11 % de syndromes grippaux en population après des lois sur les congés maladie payés aux États-Unis [12]. Le modèle central aboutit à une baisse du nombre de cas de grippe proche de ce dernier chiffre, pour un changement plus modeste : le gain de contagion central est plus probablement surestimé que sous-estimé <span class="tag">calcul</span></td></tr>
+      <tr class="grp"><td colspan="3">Grippe</td></tr>
+      <tr><td data-l="Paramètre">Cas (<code>N</code>)</td><td class="n" data-l="Valeur">4 M (2–6)</td><td data-l="Origine">Santé publique France [7]</td></tr>
+      <tr><td data-l="Paramètre">Part de salariés (<code>s</code>)</td><td class="n" data-l="Valeur">38 %</td><td data-l="Origine">60 % des consultations chez les 15-64 ans en 2025-2026 [7] × ≈ 27 M salariés sur ≈ 42 M personnes de 15 à 64 ans [33] <span class="tag">calcul</span></td></tr>
+      <tr><td data-l="Paramètre">Arrêt (<code>p</code>, <code>D</code>)</td><td class="n" data-l="Valeur">70 %, 4,8 j</td><td data-l="Origine">Réseau des GROG, 2005-2006 [22] (littérature grise, chiffres retrouvés seulement en citation secondaire) ; produit 3,4 j cohérent avec 4,0 ± 2,8 j perdus par les actifs grippés, cohorte française [9]</td></tr>
+      <tr><td data-l="Paramètre">Jours de symptômes au travail (<code>D′</code>)</td><td class="n" data-l="Valeur">2,4 j</td><td data-l="Origine">Milieu de l’intervalle 0,3–4,4 j des études de présentéisme [31]</td></tr>
+      <tr><td data-l="Paramètre">Transmission avant symptômes (<code>θ</code>)</td><td class="n" data-l="Valeur">30 % (5–50)</td><td data-l="Origine">Les sources divergent : 30–50 % par modélisation [25] ; 1 à 8 % d’après l’excrétion virale mesurée [57] ; 3 à 76 % selon la période d’incubation retenue [26] ; rôle jugé faible par une revue [27]. Bas de la fourchette de [25] retenu</td></tr>
+      <tr><td data-l="Paramètre">Taux d’attaque secondaire (<code>σ</code>)</td><td class="n" data-l="Valeur">19 % (9,5–24,1)</td><td data-l="Origine">Médiane de trois cohortes : France 1999-2000 [23] ; États-Unis 2017-2020 [13] et 2022-2024 [14]</td></tr>
+      <tr class="grp"><td colspan="3">Gastro-entérite aiguë</td></tr>
+      <tr><td data-l="Paramètre">Cas (<code>N</code>)</td><td class="n" data-l="Valeur">21 M</td><td data-l="Origine">0,33 épisode par personne et par an, enquête en population [24]</td></tr>
+      <tr><td data-l="Paramètre">Part de salariés (<code>s</code>)</td><td class="n" data-l="Valeur">31 %</td><td data-l="Origine">≈ 27 M salariés [33] × 0,24 épisode par an (30-64 ans) [24] ÷ 21 M <span class="tag">calcul</span></td></tr>
+      <tr><td data-l="Paramètre">Arrêt (<code>p</code>, <code>D</code>), symptômes (<code>D′</code>)</td><td class="n" data-l="Valeur">29,1 %, 2 j, 2,9 j</td><td data-l="Origine">Actifs absents au moins un jour (IC 19–42 %), durée médiane d’absence, durée moyenne de la maladie [24]</td></tr>
+      <tr><td data-l="Paramètre">Transmission avant symptômes (<code>θ</code>)</td><td class="n" data-l="Valeur">10 % (0–20)</td><td data-l="Origine">Non chiffrée. Norovirus : excrétion et symptômes débutent à quelques heures d’intervalle [37] ; asymptomatiques rarement à l’origine de transmissions [29] <span class="tag">hypothèse</span></td></tr>
+      <tr><td data-l="Paramètre">Taux d’attaque secondaire (<code>σ</code>)</td><td class="n" data-l="Valeur">20 % (14–33)</td><td data-l="Origine">Études de transmission familiale [15, 16]</td></tr>
+      <tr class="grp"><td colspan="3">Covid-19</td></tr>
+      <tr><td data-l="Paramètre"><code>θ</code>, <code>σ</code></td><td class="n" data-l="Valeur">59 %, 37 %</td><td data-l="Origine">Modèle d’analyse de décision [28] ; méta-analyse 2021-2022 [17]</td></tr>
+      <tr><td data-l="Paramètre"><code>N</code>, <code>s</code>, <code>p</code>, <code>D</code>, <code>D′</code></td><td class="n" data-l="Valeur">1,2 M (0,5–6,8), 38 %, 70 %, 5 j, 3 j</td><td data-l="Origine">Cas : 287 289 vus en médecine générale pendant la saison 2024-2025, 180 741 en 2025-2026 [61], multipliés par 4,3 cas symptomatiques par consultation (États-Unis, 2023-2024 [62]) <span class="tag">dérivé</span>. Borne basse : 180 741 ÷ 40 % de malades qui consultent [36]. Borne haute : 9,9 % de la population, taux américain 2023-2024 [62]. Aucune donnée publiée sur le recours à l’arrêt et sa durée depuis la fin des règles d’isolement <span class="tag">hypothèses</span></td></tr>
+    </tbody></table></div>
+
+    <h2 style="margin-top:28px">Limites</h2>
+    <ul>
+      <li><b>Le bilan est un bilan de production et de ressources médicales, pas de bien-être.</b> Ne sont valorisés ni le repos d’un salarié malade qui cesse de travailler, ni la sécurité de revenu apportée au tiers de salariés aujourd’hui non indemnisés pendant la carence, plus souvent employés de petites entreprises [19]. Un bilan productif légèrement négatif peut être jugé acceptable au regard de ces bénéfices ; ce jugement ne relève pas du calcul.</li>
+      <li><b>Le sens de l’effet de la carence est disputé.</b> L’évaluation la mieux identifiée trouve qu’un jour de carence réduit les jours d’absence de 5 %, sans report vers des arrêts longs [42] ; une étude antérieure sur la fonction publique de l’État et une étude suédoise trouvent un report [43, 45] ; la comparaison des salariés du privé trouve des arrêts plus courts chez les salariés couverts, sans établir la causalité [20]. La valeur centrale suit [42] ; elle transpose un jour de carence dans un métier particulier à trois jours dans le privé.</li>
+      <li><b>Le gain de contagion repose sur t, qui n’est pas mesuré</b>, et sur un modèle d’épidémie homogène qui amplifie fortement toute baisse de transmission. La baisse du nombre de cas de grippe obtenue en central est du même ordre que celle observée aux États-Unis pour une réforme plus large [12]. Avec t = 0, ce gain disparaît presque entièrement.</li>
+      <li><b>x transpose un effet étranger.</b> Le dispositif belge est plus restreint que la proposition (un jour, trois fois par an, salaire déjà maintenu) ; l’étude qui porte sur trois jours trouve un effet quatre fois supérieur, avec une certitude très faible [32]. À l’inverse, les absences supplémentaires prises par des malades contagieux évitent des contaminations que les termes x et y ne comptent pas.</li>
+      <li>Les journées d’absence dues à y sont valorisées comme les autres. Si elles concernent des arrêts de plus de trois jours, où les absents sont en partie remplacés, leur coût est surestimé.</li>
+      <li>L’indemnisation à 100 % du salaire sur toute la durée des arrêts, également prévue par le programme [1], n’est pas modélisée : elle doublerait au moins les 10,2 Md€ d’indemnités journalières maladie du régime général [2], en remplaçant pour partie les compléments versés par les employeurs et la prévoyance.</li>
+      <li>Restent sans mesure directe : <code>c</code>, <code>d</code>, <code>m</code>, <code>t</code>, <code>θ</code> et <code>w</code> pour la gastro-entérite, la durée moyenne des arrêts courts. <code>q</code> repose sur une seule enquête, non publiée en revue.</li>
+      <li>Les transferts sont comptés pour zéro. Les évaluations publiques françaises majorent pourtant de 20 % toute dépense publique nette, au titre du coût des prélèvements qui la financent [49] : appliquée à la part du transfert qui ne remplace pas une dépense d’employeur, cette règle retirerait environ 90 M€ par an au bilan.</li>
+      <li>Une journée d’absence est valorisée au coût moyen du travail. Les absences d’un jour désorganisent parfois davantage (travail en équipe), parfois moins (tâches rattrapées) ; l’étude belge ne relève pas de surcoût salarial direct mais une charge d’organisation [39].</li>
+      <li>La consultation évitée est valorisée à son tarif. Là où l’accès au généraliste est rationné, le temps médical libéré vaut davantage.</li>
+      <li>Pour la gastro-entérite, seule la première génération de transmission est comptée. Les autres infections respiratoires ne sont pas comptées. Le Covid-19 est inclus avec un recours à l’arrêt fixé par hypothèse ; le nombre de cas (1,2 M) est dérivé des consultations françaises [61] et d’un rapport américain entre cas et consultations [62], faute d’estimation française du nombre total de cas ; la fourchette va de 0,5 à 6,8 M.</li>
+      <li><code>S</code> et les indemnités concernent le régime général. Dans la fonction publique, non mentionnée par le programme, le jour de carence unique a représenté 134 M€ d’économies pour le seul budget de l’État en 2023 [48].</li>
+      <li>Ne sont pas modélisés : les arrêts de complaisance existants, d’éventuelles limites annuelles d’auto-déclaration ou un suivi par l’employeur, qui réduiraient x [41], l’indemnisation à 100 % au-delà du troisième jour.</li>
+    </ul>
+
+    <h2 style="margin-top:28px">Références</h2>
+    <ol class="refs">
+      <li>L’Avenir en commun, édition 2027, partie 3, chapitre 1 « À chacun selon ses besoins ». <a href="https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1/">melenchon2027.fr</a></li>
+      <li>DREES-CNAM. Arrêts maladie : au-delà des effets de la crise sanitaire, une accélération depuis 2019. Études et Résultats n° 1321, décembre 2024.</li>
+      <li>AXA. Datascope 2026, observatoire de la vie en entreprise (DSN 2019-2025, 3 millions de salariés du privé).</li>
+      <li>Service-public.fr. Arrêt maladie : indemnités journalières versées au salarié (plafond au 1er juillet 2026).</li>
+      <li>Assurance maladie. Tarifs et remboursement de la consultation de médecine générale (30 €, 70 %, participation forfaitaire de 2 €).</li>
+      <li>Insee. Médecins généralistes et outils numériques. Insee Références, 2025.</li>
+      <li>Santé publique France. Grippe saisonnière : surveillance et bilans des saisons 2024-2025 et 2025-2026 (répartition par âge des consultations, Réseau Sentinelles).</li>
+      <li>Réseau Sentinelles. Bulletins de surveillance Covid-19 2025-2026.</li>
+      <li>Carrat F, Sahler C, Rogez S, et al. Influenza burden of illness: estimates from a national prospective survey of household contacts in France. Arch Intern Med. 2002;162(16):1842-8.</li>
+      <li>Edwards CH, Tomba GS, de Blasio BF. Influenza in workplaces: transmission, workers’ adherence to sick leave advice and European sick leave recommendations. Eur J Public Health. 2016;26(3):478-85.</li>
+      <li>Kumar S, Grefenstette JJ, Galloway D, Albert SM, Burke DS. Policies to reduce influenza in the workplace: impact assessments using an agent-based model. Am J Public Health. 2013;103(8):1406-11.</li>
+      <li>Pichler S, Wen K, Ziebarth NR. Positive health externalities of mandating paid sick leave. IZA Discussion Paper 13530, 2020.</li>
+      <li>Grijalva CG, Nguyen HQ, Zhu Y, et al. Estimated effectiveness of influenza vaccines in preventing secondary infections in households. JAMA Netw Open. 2024.</li>
+      <li>Influenza household transmission and genomic diversity in the United States: a prospective cohort study, 2022-2024. J Infect. 2026.</li>
+      <li>Moran MC, et al. Acute gastroenteritis among household contacts of children with severe norovirus gastroenteritis, United States, 2011-2016. J Pediatric Infect Dis Soc. 2025;14(6):piaf049.</li>
+      <li>Matsuyama R, Miura F, Tsuzuki S, Nishiura H. Household transmission of acute gastroenteritis during the winter season in Japan. J Int Med Res. 2018.</li>
+      <li>Madewell ZJ, Yang Y, Longini IM Jr, Halloran ME, Dean NE. Household secondary attack rates of SARS-CoV-2 by variant and vaccination status. JAMA Netw Open. 2022;5(4):e229317.</li>
+      <li>Insee. Ménages, couples et familles. France, portrait social, 2023.</li>
+      <li>Dares. Les entreprises indemnisent-elles les jours de carence pour arrêt maladie ? Focus n° 39, septembre 2026.</li>
+      <li>Pollak C. L’effet du délai de carence sur le recours aux arrêts maladie des salariés du secteur privé. DREES, Dossiers Solidarité et Santé n° 58, janvier 2015.</li>
+      <li>Insee. Coût horaire moyen du travail, 2025.</li>
+      <li>Groupe d’expertise et d’information sur la grippe (GEIG). Impact économique de la grippe, d’après l’enquête Open Rome et Réseau des GROG, saison 2005-2006.</li>
+      <li>Viboud C, Boëlle PY, Cauchemez S, et al. Risk factors of influenza transmission in households. Int Congr Ser. 2004;1263. doi:10.1016/j.ics.2004.01.013</li>
+      <li>Van Cauteren D, de Valk H, Vaux S, Le Strat Y, Vaillant V. Burden of acute gastroenteritis and healthcare-seeking behaviour in France: a population-based study. Epidemiol Infect. 2012;140(4):697-705.</li>
+      <li>Fraser C, Riley S, Anderson RM, Ferguson NM. Factors that make an infectious disease outbreak controllable. Proc Natl Acad Sci USA. 2004;101(16):6146-51.</li>
+      <li>Chan LYH, Morris SE, Stockwell MS, et al. Estimating the generation time for influenza transmission using household data in the United States. Epidemics. 2025;50:100815.</li>
+      <li>Patrozou E, Mermel LA. Does influenza transmission occur from asymptomatic infection or prior to symptom onset? Public Health Rep. 2009;124(2):193-6.</li>
+      <li>Johansson MA, Quandelacy TM, Kada S, et al. SARS-CoV-2 transmission from people without COVID-19 symptoms. JAMA Netw Open. 2021;4(1):e2035057.</li>
+      <li>Sukhrie FHA, Teunis P, Vennema H, et al. Nosocomial transmission of norovirus is mainly caused by symptomatic cases. Clin Infect Dis. 2012;54(7):931-7.</li>
+      <li>DREES. La moitié des rendez-vous sont obtenus en 2 jours chez le généraliste, en 52 jours chez l’ophtalmologiste. Études et Résultats n° 1085, octobre 2018.</li>
+      <li>Blanchet Zumofen MH, Frimpter J, Hansen SA. Impact of influenza and influenza-like illness on work productivity outcomes: a systematic literature review. PharmacoEconomics. 2023;41(3):253-73.</li>
+      <li>Kausto J, Verbeek JH, Ruotsalainen JH, et al. Self-certification versus physician certification of sick leave for reducing sickness absence and associated costs. Cochrane Database Syst Rev. 2019;5:CD013098.</li>
+      <li>Insee. Estimations d’emploi salarié et estimations de population au 1er janvier 2025.</li>
+      <li>DREES. Panel d’observation des pratiques et des conditions d’exercice en médecine générale, résultats 2025 : 46 heures de travail hebdomadaire, 4 800 actes par médecin et par an. 2026.</li>
+      <li>Productivity costs due to respiratory infections in Denmark: a potential for prophylaxis. Communication affichée, ISPOR Europe 2025.</li>
+      <li>Réseau Sentinelles, Santé publique France. GrippeNet.fr, bilans des saisons 2013-2014 et 2014-2015.</li>
+      <li>Ge Y, Billings WZ, Opekun A, et al. Effect of norovirus inoculum dose on virus kinetics, shedding, and symptoms. Emerg Infect Dis. 2023;29(7):1349-56.</li>
+      <li>Van Wormer JJ, King JP, Gajewski A, McLean HQ, Belongia EA. Influenza and workplace productivity loss in working adults. J Occup Environ Med. 2017;59(12):1135-9.</li>
+      <li>Securex, Verwimp P (HIVA-KU Leuven, ULB). Analyse d’impact de la suppression du certificat médical pour un jour d’absence, données 2021-2024. Octobre 2026.</li>
+      <li>Hartman L, Hesselius P, Johansson P. Effects of eligibility screening in the sickness insurance: evidence from a field experiment. Labour Econ. 2013;20:48-56.</li>
+      <li>Ferman B, Torsvik G, Vaage K. Skipping the doctor: evidence from a case with extended self-certification of paid sick leave. J Popul Econ. 2023;36(2):935-71.</li>
+      <li>Hillion M, Maugendre E. L’effet du « jour de carence » sur les absences pour maladie ordinaire, la santé perçue et le recours aux soins à court terme. Insee, Document de travail n° 2023-06 ; Hillion M. Insee Analyses n° 95, juillet 2024.</li>
+      <li>Cazenave-Lacroutz A, Godzinski A. Le jour de carence dans la fonction publique de l’État : moins d’absences courtes, plus d’absences longues. Insee Analyses n° 36, novembre 2017.</li>
+      <li>Serviços Partilhados do Ministério da Saúde (Portugal). Bilan de trois ans d’autodéclaration de maladie, SNS 24, mai 2026 ; estimation initiale de 600 000 consultations évitées par an, mai 2023.</li>
+      <li>Pettersson-Lidbom P, Skogman Thoursie P. Temporary disability insurance and labor supply: evidence from a natural experiment. Scand J Econ. 2013;115(2):485-507.</li>
+      <li>Pichler S, Ziebarth NR. The pros and cons of sick pay schemes: testing for contagious presenteeism and noncontagious absenteeism behavior. J Public Econ. 2017;156:14-33.</li>
+      <li>Cour des comptes. L’organisation territoriale des soins de premier recours. Rapport public thématique, mai 2024.</li>
+      <li>IGF, IGAS. Revue de dépenses relative à la réduction des absences dans la fonction publique. Juillet 2024.</li>
+      <li>Quinet É (dir.). L’évaluation socioéconomique des investissements publics. Commissariat général à la stratégie et à la prospective, 2013.</li>
+      <li>Dares. Quel lien entre les conditions de travail et le présentéisme des salariés en cas de maladie ? Dares Analyses, août 2020 (enquête Conditions de travail 2016).</li>
+      <li>Caisse nationale de l’assurance maladie. Bilan des contrôles d’arrêts de travail, 2008, cité dans la question écrite n° 55242, Assemblée nationale, 13ᵉ législature.</li>
+      <li>Ziebarth NR, Karlsson M. A natural experiment on sick pay cuts, sickness absence, and labor costs. J Public Econ. 2010;94(11-12):1108-22.</li>
+      <li>Marie O, Vall Castelló J. If sick-leave becomes more costly, will I go back to work? Could it be too soon? IZA Discussion Paper 13379, 2020.</li>
+      <li>Utvidet egenmelding – en vei mot riktigere sykefravær? (essai d’auto-déclaration étendue, commune de Kristiansand, 2002-2004). Norsk Epidemiologi.</li>
+      <li>Urssaf. Effectifs salariés et masse salariale du secteur privé. Stat’Ur n° 415, mars 2026.</li>
+      <li>Biggerstaff M, Cauchemez S, Reed C, Gambhir M, Finelli L. Estimates of the reproduction number for seasonal, pandemic, and zoonotic influenza: a systematic review of the literature. BMC Infect Dis. 2014;14:480.</li>
+      <li>Lau LLH, Cowling BJ, Fang VJ, et al. Viral shedding and clinical illness in naturally acquired influenza virus infections. J Infect Dis. 2010;201(10):1509-16.</li>
+      <li>Ahmed F, Zviedrite N, Uzicanin A. Effectiveness of workplace social distancing measures in reducing influenza transmission: a systematic review. BMC Public Health. 2018;18:518.</li>
+      <li>Medical certificates and sickness absence: who stays away from work if monitoring is relaxed? IFAU Working Paper 2024:19.</li>
+      <li>Santé publique France. Bulletin de surveillance des infections respiratoires aiguës, 12 novembre 2026 (Covid-19 : indicateurs syndromiques et virologiques en augmentation).</li>
+      <li>Réseau Sentinelles. Bilans d’activité 2024 et 2025 : cas de Covid-19 et de grippe vus en consultation de médecine générale, saisons 2024-2025 et 2025-2026.</li>
+      <li>Centers for Disease Control and Prevention. Estimated COVID-19 burden, United States, 2023-2024 : 33,0 millions de cas symptomatiques (20,2 à 49,0), 7,7 millions de consultations.</li>
+    </ol>
+  </div>
+</section>
+
+<script>
+{
+const S = 8.4e6 * 0.44 / 0.56, ARR = 8.4e6, PC = 30, GP = 240e6, ETP = 4800, NE = 20.2e6, IJ0 = 35.7, LONGD = 286e6, COV = 0.66, CAPF = 0.11;
+const TIPS = {"t": {"q": "Temps moyen pendant lequel un salarié malade, qui finira par s’arrêter, travaille encore parce qu’il n’a pas obtenu de rendez-vous médical. L’auto-déclaration supprime cette attente.", "l": "Aucune mesure directe. Délais : 49 % des rendez-vous pour symptômes sont obtenus le jour même [30]. Présentéisme : 27 % des jours de maladie sont travaillés en France [50].", "w": "0,14 j = 51 % de rendez-vous non obtenus le jour même × 1 jour d’attente × 27 % de jours de maladie travaillés. Bornes : 0 si personne ne travaille en attendant, 0,5 si tous le font."}, "c": {"q": "Quand un malade s’arrête plus tôt, reprend-il aussi plus tôt ? 100 % : la durée totale d’absence ne change pas. 0 % : l’arrêt s’allonge d’autant.", "l": "Aucune mesure directe. Indices : les absences auto-déclarées de trois jours au plus sont plus courtes de 0,32 jour [32] ; à Kristiansand, les absences courtes raccourcissent de 0,8 jour [54].", "w": "Milieu des bornes logiques, faute de mesure. Les indices disponibles plaident plutôt pour une valeur élevée."}, "b": {"q": "Part supplémentaire de malades de la grippe ou de la gastro-entérite qui s’arrêtent au lieu de travailler malades. Ces arrêts évitent des contaminations.", "l": "France, privé : 29,2 % des salariés couverts ont un arrêt dans l’année contre 28,7 % des non-couverts, soit +1,7 %, écart non significatif [20]. Éducation nationale : −23 % d’épisodes avec un jour de carence, soit jusqu’à +30 % à sa suppression [42].", "w": "Valeur de la seule étude sur le privé français [20]. Le curseur va jusqu’à 30 % pour tester l’ordre de grandeur de [42]."}, "q": {"q": "Part du travail habituel que fournit un salarié qui vient travailler malade. Sert à valoriser ce que l’on perd quand il s’arrête, et ce que l’on gagne quand il ne tombe pas malade.", "l": "Danemark, 3 000 salariés : 45 % de perte déclarée les jours travaillés malade [35]. États-Unis, grippe confirmée : 67 à 74 % du travail de la semaine perdu, absences comprises [38].", "w": "100 % − 45 % [35]. Source unique, communication de congrès non publiée en revue."}, "a": {"q": "Part des consultations pour arrêt court qui n’auraient pas lieu sans l’obligation de certificat. Ce sont les consultations évitées.", "l": "Norvège, Kristiansand : certificats divisés par deux pour les arrêts de moins d’une semaine [54]. Par dérivation : 33 % des gastro-entérites [24] et 37 à 42 % des syndromes grippaux [36] donnent lieu à consultation, d’où 58 à 67 %. Portugal : 600 000 consultations évitées par an selon l’estimation initiale [44].", "w": "50 % : seule mesure directe [54]. 62 % en hypothèses favorables, par dérivation."}, "d": {"q": "Durée moyenne d’une absence injustifiée. Ne sert qu’à convertir le seuil en nombre d’arrêts.", "l": "Aucune mesure publiée. L’auto-déclaration serait limitée à trois jours ; en Belgique, les absences supplémentaires durent un jour [39].", "w": "Milieu de l’intervalle autorisé, 1 à 3 jours."}, "J": {"q": "Valeur d’une journée de travail perdue ou regagnée, mesurée par ce qu’elle coûte à l’employeur.", "l": "Coût horaire moyen du travail en France : 44,7 € en 2025 [21].", "w": "44,7 € × 7 heures."}, "x": {"q": "Journées d’absence en plus quand le certificat n’est plus exigé, sans distinguer abus et malades qui travaillaient malades. C’est le paramètre qui pèse le plus sur le résultat.", "l": "Belgique, 2022 : +0,12 absence d’un jour par travailleur [39]. Norvège, Mandal : aucune hausse [41]. Introduction d’une auto-déclaration de trois jours : +0,54 jour par personne et par an, certitude très faible [32].", "w": "0,12 : évaluation la plus récente et la plus large (16 000 employeurs), mais dispositif plus restreint que la proposition : minorant probable."}, "m": {"q": "Parmi les absences supplémentaires, part prise par des malades qui aujourd’hui viennent travailler. Le reste est injustifié. Une absence justifiée coûte <code>q</code> journée, une absence injustifiée une journée entière.", "l": "Jamais mesuré. Repères : les salariés français travaillent malades 3 jours par an [50] ; 13 % des arrêts courts contrôlés par l’Assurance maladie en 2008 étaient injustifiés ou trop longs, sur des contrôles ciblés [51].", "w": "Milieu des bornes logiques, faute de mesure."}, "y": {"q": "Journées d’absence en plus (ou en moins) chez le tiers de salariés aujourd’hui non indemnisés pendant la carence, quand celle-ci disparaît.", "l": "Éducation nationale : un jour de carence réduit les jours d’absence de 5,1 % [42]. Privé : salariés couverts absents 2,8 jours de moins par an (IC −5,3 à −0,3), causalité non établie [20]. Allemagne : −5 % de jours quand le salaire maintenu passe de 100 à 80 % [52]. Suède, 1987 : total des jours en baisse après suppression du jour de carence [45].", "w": "0,35 = 5,1 % de 6,9 jours par agent [42], étude la mieux identifiée en France. Un seul jour de carence, contre trois dans le privé."}, "w": {"q": "Sur 100 contaminations, combien ont lieu sur le lieu de travail. Seules celles-ci peuvent être évitées par un arrêt plus précoce.", "l": "Revue de modèles sur la grippe : 16 % en moyenne, de 9 à 33 % selon les études [10]. Simulation américaine : 11,5 % [11].", "w": "Moyenne de la revue [10]. Appliquée à la gastro-entérite faute de donnée."}, "R": {"q": "Nombre moyen de personnes contaminées par un malade. Plus il est proche de 1, plus une petite baisse de transmission réduit le nombre total de cas.", "l": "Revue systématique : médiane 1,28, intervalle interquartile 1,19 à 1,37 [56].", "w": "Médiane de la revue [56]."}, "hh": {"q": "Nombre de personnes vivant avec un malade, exposées à une contamination à domicile.", "l": "Ménages de 2,2 personnes en moyenne en France [18].", "w": "2,2 − 1."}, "N": {"q": "Nombre annuel de cas en France, tous âges.", "l": "Grippe : 2 à 6 millions selon les saisons [7]. Gastro-entérite : 0,33 épisode par personne et par an (IC 0,28 à 0,37), soit plus de 21 millions [24]. Covid-19 : 287 000 cas vus en médecine générale en 2024-2025, 181 000 en 2025-2026 [61] ; aux États-Unis, 4,3 cas symptomatiques par consultation et 9,9 % de la population touchée en 2023-2024 [62].", "w": "Grippe : milieu de la fourchette. Gastro-entérite : estimation de l’enquête en population. Covid-19 : 1,2 million = 287 000 × 4,3 ; fourchette 0,5 à 6,8 millions. Vague en cours en novembre 2026 [60]."}, "s": {"q": "Part des cas qui concernent des salariés, seuls concernés par un arrêt de travail.", "l": "Pas de mesure directe. Grippe : 60 % des consultations chez les 15-64 ans [7]. Gastro-entérite : 0,24 épisode par an chez les 30-64 ans [24]. 27 millions de salariés [33]. Covid-19 : même part que la grippe, par hypothèse.", "w": "Calcul à partir de ces trois chiffres."}, "p": {"q": "Parmi les salariés malades, part de ceux qui prennent aujourd’hui un arrêt. Les autres travaillent malades.", "l": "Grippe : 70 % en France [22] ; 1 à 74 % selon les études internationales [31]. Gastro-entérite : 29,1 % des actifs absents au moins un jour (IC 19 à 42) [24]. Covid-19 : aucune donnée publiée depuis la fin des règles d’isolement ; 70 % par hypothèse, comme la grippe.", "w": "Valeurs françaises. Le chiffre de la grippe vient de littérature grise, retrouvée seulement en citation secondaire."}, "D": {"q": "Durée moyenne de l’arrêt de ceux qui s’arrêtent.", "l": "Grippe : 4,8 jours en France [22] ; 4,0 ± 2,8 jours perdus par actif grippé [9] ; 0,5 à 5,3 jours selon les études [31]. Gastro-entérite : médiane 2 jours [24]. Covid-19 : 5 jours, par hypothèse.", "w": "Valeurs françaises."}, "Dp": {"q": "Pour ceux qui ne s’arrêtent pas : nombre de jours travaillés avec des symptômes.", "l": "Grippe : 0,3 à 4,4 jours selon les études de présentéisme [31]. Gastro-entérite : durée moyenne de la maladie 2,9 jours [24]. Covid-19 : 3 jours, par hypothèse.", "w": "Grippe : milieu de l’intervalle. Gastro-entérite : durée de la maladie."}, "th": {"q": "Part des contaminations qui ont lieu avant que le malade se sache malade, ou par des personnes sans symptômes. Aucun arrêt ne peut les éviter.", "l": "Grippe : 30 à 50 % par modélisation [25] ; 1 à 8 % d’après l’excrétion virale mesurée [57] ; 3 à 76 % selon la période d’incubation retenue [26]. Gastro-entérite : non chiffrée, symptômes et excrétion débutent à quelques heures d’intervalle [37]. Covid-19 : 59 % [28].", "w": "Grippe : bas de la fourchette de [25]. Gastro-entérite : hypothèse."}, "sar": {"q": "Probabilité qu’une personne du foyer soit contaminée par le malade.", "l": "Grippe : 9,5 à 24,1 % dans trois cohortes [13, 14, 23]. Gastro-entérite : 14 à 33 % [15, 16]. Covid-19 : 37 % [17].", "w": "Grippe : médiane des trois cohortes. Gastro-entérite : valeur centrale des études."}, "S": {"q": "Nombre d’arrêts courts, aujourd’hui non indemnisés par l’Assurance maladie et donc absents de ses statistiques.", "l": "8,4 millions d’arrêts indemnisés [2] ; 44 % des arrêts durent 1 à 3 jours [3]. Recoupement : environ 6 millions de consultations par an pour certificats d’absence courte [47].", "w": "8,4 M × 44 % ÷ 56 %."}, "IJ": {"q": "Montant moyen versé par l’Assurance maladie par journée indemnisée.", "l": "10,2 Md€ pour 286 millions de journées en 2023 [2]. Plafond : 42,97 € depuis juillet 2026 [4].", "w": "10,2 Md€ ÷ 286 M."}, "Ns": {"q": "Effectif auquel s’appliquent les absences supplémentaires.", "l": "Urssaf, 2025 [55].", "w": "Chiffre Urssaf."}, "cov": {"q": "Part des salariés dont l’employeur paie déjà les trois jours de carence.", "l": "Dares, entreprises de 10 salariés ou plus, 2024 [19] ; 62,8 % dans l’enquête de 2009 [20].", "w": "Chiffre Dares le plus récent. Les très petites entreprises, moins couvertes, sont hors champ."}, "P": {"q": "Tarif de la consultation, et part payée par l’Assurance maladie.", "l": "30 €, remboursés à 70 % moins 2 € de participation forfaitaire [5].", "w": "Tarif en vigueur."}, "hl": {"q": "Vitesse à laquelle un grippé devient moins contagieux après le début des symptômes.", "l": "L’essentiel de l’excrétion virale a lieu dans les deux à trois premiers jours [57].", "w": "Forme exponentielle compatible avec [57] ; les valeurs jour par jour ne sont pas publiées dans le texte."}, "cap": {"q": "Borne imposée au modèle pour éviter qu’il prédise plus qu’une réforme plus large n’a produit.", "l": "États-Unis : −11 % de syndromes grippaux la première année après l’instauration de congés maladie payés [12].", "w": "Effet observé le plus élevé pour une réforme comparable."}};
+const tip = id => { const t = TIPS[id]; return t ? `<span class="tipbox" role="tooltip"><b>Ce que c’est.</b> ${t.q}<br><b>Dans la littérature.</b> ${t.l}<br><b>Valeur par défaut.</b> ${t.w}</span>` : ""; };
+const REFURL = {"1": "https://melenchon2027.fr/programme/livre/mettre-en-securite-sociale/chapitre1/", "2": "https://drees.solidarites-sante.gouv.fr/publications-communique-de-presse/etudes-et-resultats/241211_ER_Arrets-Maladie", "3": "https://media.axa.fr/content/dam/axa-fr/image/espace-presse/2026/datascope-2026/CP_Datascope_2026.pdf", "4": "https://www.google.com/search?q=Service-public.fr.%20Arr%C3%AAt%20maladie%20%3A%20indemnit%C3%A9s%20journali%C3%A8res%20vers%C3%A9es%20au%20salari%C3%A9%20%28plafond%20au%201er%20juillet%202026%29.", "5": "https://www.google.com/search?q=Assurance%20maladie.%20Tarifs%20et%20remboursement%20de%20la%20consultation%20de%20m%C3%A9decine%20g%C3%A9n%C3%A9rale%20%2830%20%E2%82%AC%2C%2070%20%25%2C%20participation%20forfaitaire%20de%202%20%E2%82%AC%29.", "6": "https://www.google.com/search?q=Insee.%20M%C3%A9decins%20g%C3%A9n%C3%A9ralistes%20et%20outils%20num%C3%A9riques.%20Insee%20R%C3%A9f%C3%A9rences%2C%202025.", "7": "https://www.google.com/search?q=Sant%C3%A9%20publique%20France.%20Grippe%20saisonni%C3%A8re%20%3A%20surveillance%20et%20bilans%20des%20saisons%202024-2025%20et%202025-2026%20%28r%C3%A9partition%20par%20%C3%A2ge%20des%20consultations%2C%20R%C3%A9seau%20Sentinelles%29.", "8": "https://www.google.com/search?q=R%C3%A9seau%20Sentinelles.%20Bulletins%20de%20surveillance%20Covid-19%202025-2026.", "9": "https://www.google.com/search?q=Carrat%20F%2C%20Sahler%20C%2C%20Rogez%20S%2C%20et%20al.%20Influenza%20burden%20of%20illness%3A%20estimates%20from%20a%20national%20prospective%20survey%20of%20household%20contacts%20in%20France.%20Arch%20Intern%20Med.%202002%3B162%2816%29%3A1842-8.", "10": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4884332", "11": "https://pubmed.ncbi.nlm.nih.gov/23763426/", "12": "https://www.google.com/search?q=Pichler%20S%2C%20Wen%20K%2C%20Ziebarth%20NR.%20Positive%20health%20externalities%20of%20mandating%20paid%20sick%20leave.%20IZA%20Discussion%20Paper%2013530%2C%202020.", "13": "https://www.google.com/search?q=Grijalva%20CG%2C%20Nguyen%20HQ%2C%20Zhu%20Y%2C%20et%20al.%20Estimated%20effectiveness%20of%20influenza%20vaccines%20in%20preventing%20secondary%20infections%20in%20households.%20JAMA%20Netw%20Open.%202024.", "14": "https://www.google.com/search?q=Influenza%20household%20transmission%20and%20genomic%20diversity%20in%20the%20United%20States%3A%20a%20prospective%20cohort%20study%2C%202022-2024.%20J%20Infect.%202026.", "15": "https://www.google.com/search?q=Moran%20MC%2C%20et%20al.%20Acute%20gastroenteritis%20among%20household%20contacts%20of%20children%20with%20severe%20norovirus%20gastroenteritis%2C%20United%20States%2C%202011-2016.%20J%20Pediatric%20Infect%20Dis%20Soc.%202025%3B14%286%29%3A", "16": "https://www.google.com/search?q=Matsuyama%20R%2C%20Miura%20F%2C%20Tsuzuki%20S%2C%20Nishiura%20H.%20Household%20transmission%20of%20acute%20gastroenteritis%20during%20the%20winter%20season%20in%20Japan.%20J%20Int%20Med%20Res.%202018.", "17": "https://doi.org/10.1001/jamanetworkopen.2022.9317", "18": "https://www.google.com/search?q=Insee.%20M%C3%A9nages%2C%20couples%20et%20familles.%20France%2C%20portrait%20social%2C%202023.", "19": "https://www.vie-publique.fr/en-bref/304659-arrets-maladie-quelles-entreprises-indemnisent-les-jours-de-carence", "20": "https://www.drees.solidarites-sante.gouv.fr/sites/default/files/2020-08/dss58.pdf", "21": "https://www.google.com/search?q=Insee.%20Co%C3%BBt%20horaire%20moyen%20du%20travail%2C%202025.", "22": "https://www.google.com/search?q=Groupe%20d%E2%80%99expertise%20et%20d%E2%80%99information%20sur%20la%20grippe%20%28GEIG%29.%20Impact%20%C3%A9conomique%20de%20la%20grippe%2C%20d%E2%80%99apr%C3%A8s%20l%E2%80%99enqu%C3%AAte%20Open%20Rome%20et%20R%C3%A9seau%20des%20GROG%2C%20saison%202005-2006.", "23": "https://doi.org/10.1016/j.ics.2004.01.013", "24": "https://www.santepubliquefrance.fr/maladies-et-traumatismes/maladies-infectieuses-d-origine-alimentaire/gastro-enterite-aigue/burden-of-acute-gastroenteritis-and-healthcare-seeking-behaviour-in-france-a-population-based-study", "25": "https://www.google.com/search?q=Fraser%20C%2C%20Riley%20S%2C%20Anderson%20RM%2C%20Ferguson%20NM.%20Factors%20that%20make%20an%20infectious%20disease%20outbreak%20controllable.%20Proc%20Natl%20Acad%20Sci%20USA.%202004%3B101%2816%29%3A6146-51.", "26": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11370535/", "27": "https://www.google.com/search?q=Patrozou%20E%2C%20Mermel%20LA.%20Does%20influenza%20transmission%20occur%20from%20asymptomatic%20infection%20or%20prior%20to%20symptom%20onset%3F%20Public%20Health%20Rep.%202009%3B124%282%29%3A193-6.", "28": "https://doi.org/10.1001/jamanetworkopen.2020.35057", "29": "https://www.google.com/search?q=Sukhrie%20FHA%2C%20Teunis%20P%2C%20Vennema%20H%2C%20et%20al.%20Nosocomial%20transmission%20of%20norovirus%20is%20mainly%20caused%20by%20symptomatic%20cases.%20Clin%20Infect%20Dis.%202012%3B54%287%29%3A931-7.", "30": "https://drees.solidarites-sante.gouv.fr/publications/etudes-et-resultats/la-moitie-des-rendez-vous-sont-obtenus-en-2-jours-chez-le", "31": "https://link.springer.com/content/pdf/10.1007/s40273-022-01224-9.pdf", "32": "https://www.cochranelibrary.com/cdsr/doi/10.1002/14651858.CD013098.pub2/full", "33": "https://www.google.com/search?q=Insee.%20Estimations%20d%E2%80%99emploi%20salari%C3%A9%20et%20estimations%20de%20population%20au%201er%20janvier%202025.", "34": "https://www.google.com/search?q=DREES.%20Panel%20d%E2%80%99observation%20des%20pratiques%20et%20des%20conditions%20d%E2%80%99exercice%20en%20m%C3%A9decine%20g%C3%A9n%C3%A9rale%2C%20r%C3%A9sultats%202025%20%3A%2046%20heures%20de%20travail%20hebdomadaire%2C%204%20800%20actes%20par%20m%C3%A9decin%20et%20par%20an.%202", "35": "https://www.google.com/search?q=Productivity%20costs%20due%20to%20respiratory%20infections%20in%20Denmark%3A%20a%20potential%20for%20prophylaxis.%20Communication%20affich%C3%A9e%2C%20ISPOR%20Europe%202025.", "36": "https://www.sentiweb.fr/document/D50WMQcm6x5T", "37": "https://www.google.com/search?q=Ge%20Y%2C%20Billings%20WZ%2C%20Opekun%20A%2C%20et%20al.%20Effect%20of%20norovirus%20inoculum%20dose%20on%20virus%20kinetics%2C%20shedding%2C%20and%20symptoms.%20Emerg%20Infect%20Dis.%202023%3B29%287%29%3A1349-56.", "38": "https://stacks.cdc.gov/view/cdc/125395", "39": "https://blog.forumforthefuture.be/fr/article/absences-dun-jour-en-hausse-quel-impact-reel-de-la-suppression-du-certificat-medical-/32733", "40": "https://econpapers.repec.org/RePEc:eee:labeco:v:20:y:2013:i:c:p:48-56", "41": "https://doi.org/10.1007/s00148-021-00841-6", "42": "https://www.insee.fr/fr/statistiques/8198911", "43": "https://www.insee.fr/fr/statistiques/3181789", "44": "https://www.rtp.pt/noticias/pais/sns-24-emitiu-cerca-de-15-milhoes-de-autodeclaracoes-de-doenca-em-tres-anos_n1738273", "45": "https://www.ne.su.se/polopoly_fs/1.121047.1359039144!/menu/standard/file/pettersonthoursie_11nov2010_sje.pdf", "46": "https://www.nber.org/papers/w22530", "47": "https://www.lequotidiendumedecin.fr/liberal-soins-de-ville/exercice/certificats-inutiles-autodeclaration-des-arrets-courts-la-cour-des-comptes-veut-liberer-du-temps", "48": "https://vie-publique.fr/files/rapport/pdf/295386.pdf", "49": "https://www.google.com/search?q=Quinet%20%C3%89%20%28dir.%29.%20L%E2%80%99%C3%A9valuation%20socio%C3%A9conomique%20des%20investissements%20publics.%20Commissariat%20g%C3%A9n%C3%A9ral%20%C3%A0%20la%20strat%C3%A9gie%20et%20%C3%A0%20la%20prospective%2C%202013.", "50": "https://www.google.com/search?q=Dares.%20Quel%20lien%20entre%20les%20conditions%20de%20travail%20et%20le%20pr%C3%A9sent%C3%A9isme%20des%20salari%C3%A9s%20en%20cas%20de%20maladie%20%3F%20Dares%20Analyses%2C%20ao%C3%BBt%202020%20%28enqu%C3%AAte%20Conditions%20de%20travail%202016%29.", "51": "https://www.assemblee-nationale.fr/dyn/13/questions/QANR5L13QE55242.pdf", "52": "https://doi.org/10.1016/j.jpubeco.2010.09.001", "53": "https://docs.iza.org/dp13379.pdf", "54": "https://www.ntnu.no/ojs/index.php/norepid/article/view/594", "55": "https://hr-infos.fr/wp-content/uploads/2026/03/Stat_Ur_415.pdf", "56": "https://www.biomedcentral.com/1471-2334/14/480", "57": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3060408/", "58": "https://link.springer.com/article/10.1186/s12889-018-5446-1", "59": "https://www.ifau.se/globalassets/pdf/se/2024/wp-2024-19-medical-certificates-and-sickness-absence-who-stays-away-from-work-if-monitoring-is-relaxed.pdf", "60": "https://www.santepubliquefrance.fr/en/covid-19/data", "61": "https://www.sentiweb.fr/document/6881", "62": "https://www.contagionlive.com/view/cdc-calculates-continuing-burden-from-covid-19-illnesses"};
+const escH = t => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+function linkRefs(root){
+  if (!document.createTreeWalker || !root) return;
+  const tw = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), nodes = [];
+  while (tw.nextNode()){ const n = tw.currentNode; if (/\[\d/.test(n.nodeValue) && n.parentElement && !n.parentElement.closest("a,script,style,ol.refs")) nodes.push(n); }
+  for (const n of nodes){
+    const sp = document.createElement("span");
+    sp.innerHTML = escH(n.nodeValue).replace(/\[(\d+(?:[–, ]+\d+)*)\]/g, (m, inner) => "[" + inner.replace(/\d+/g, k => REFURL[k] ? `<a class="rf" href="${REFURL[k]}" target="_blank" rel="noopener" title="Ouvrir la référence ${k} dans un nouvel onglet">${k}</a>` : k) + "]");
+    n.replaceWith(...sp.childNodes);
+  }
+}
+let prevVals = null;
+const OX = [[0.12, "Belgique : +0,12 jour par salarié [39]"], [0, "Norvège : aucune hausse [41]"], [0.54, "Revue Cochrane : +0,54 jour par salarié [32]"]];
+const OY = [[0.35, "Éducation nationale : +0,35 jour [42]"], [-0.3, "Privé, DREES : −0,3 jour [20]"], [0.85, "Effet relatif transposé : +0,85 jour [42]"], [0, "Aucun effet"]];
+function fillSel(id, opts, v){
+  const i = opts.findIndex(o => Math.abs(o[0] - v) < 1e-9);
+  $(id).innerHTML = opts.map((o, k) => `<option value="${k}">${o[1]}</option>`).join("") + (i < 0 ? `<option value="c">Valeur du curseur : ${nf(v, 2)} jour</option>` : "");
+  $(id).value = i < 0 ? "c" : String(i);
+}
+const SL = [
+  {id:"t", lab:"Jours travaillés malade avant l’arrêt, faute de certificat (t)", min:0, max:1, step:0.01, u:" j", dp:2, note:"0,14 j : la moitié des rendez-vous pour symptômes ne sont pas obtenus le jour même [30] et 27 % des jours de maladie sont travaillés [50]. Bornes 0 à 0,5 j."},
+  {id:"c", lab:"Arrêt avancé compensé par un retour avancé (c)", min:0, max:100, step:10, u:" %", note:"Non mesuré. 0 % : durée maximale déclarée ; 100 % : retour fixé par la guérison."},
+  {id:"b", lab:"Hausse du recours à l’arrêt chez les salariés malades (β)", min:0, max:30, step:0.1, u:" %", dp:1, note:"29,2 % contre 28,7 % quand la carence est indemnisée, non significatif [20] ; jusqu’à 30 % chez les non-couverts d’après [42]."},
+  {id:"w", lab:"Part des contaminations survenant au travail (w)", min:5, max:35, step:1, u:" %", note:"16 % (9–33 %), grippe [10]."},
+  {id:"R", lab:"Nombre de reproduction de la grippe saisonnière (R)", min:1.1, max:1.6, step:0.01, u:"", dp:2, note:"Médiane 1,28 (1,19–1,37) [56]. Convertit la baisse de transmission au travail en baisse du nombre total de cas."},
+  {id:"hh", lab:"Autres personnes du foyer (h)", min:0, max:3, step:0.1, u:"", dp:1, note:"1,2 [18] ; première génération dans le foyer."},
+  {id:"q", lab:"Productivité d’un salarié travaillant malade (q)", min:0, max:100, step:5, u:" %", note:"Perte de 45 % déclarée les jours travaillés malade [35]."},
+  {id:"a", lab:"Consultations à visée uniquement administrative (a)", min:0, max:100, step:1, u:" %", note:"50 % : certificats pour arrêts de moins d’une semaine divisés par deux à Kristiansand [54]. 62 % par dérivation [24, 36]."},
+  {id:"d", lab:"Durée d’un arrêt injustifié (d)", min:1, max:3, step:0.5, u:" j", dp:1, note:"Milieu de l’intervalle autorisé ; non mesuré."},
+  {id:"J", lab:"Coût d’une journée de travail (J)", min:150, max:450, step:1, u:" €", note:"44,7 €/h × 7 h [21]."},
+  {id:"x", sep:1, lab:"Absences supplémentaires dues à l’auto-déclaration, justifiées ou non, en jours par salarié du privé et par an (x)", min:0, max:0.7, step:0.01, u:" j", dp:2, note:"Belgique : +0,12 [39]. Norvège : aucune hausse [41]. Introduction d’une auto-déclaration de trois jours : +0,54 [32]."},
+  {id:"m", lab:"Part justifiée de ces absences : salariés réellement malades (m)", min:0, max:100, step:10, u:" %", note:"Non mesuré. Le reste (1 − <code>m</code>) est injustifié. Une absence injustifiée coûte une journée ; une absence justifiée coûte <code>q</code>, car le salarié malade travaillait déjà au ralenti."},
+  {id:"y", lab:"Effet propre de la suppression de la carence, en jours par salarié non couvert et par an (y)", min:-1, max:1.5, step:0.05, u:" j", dp:2, note:"+0,35 d’après l’Éducation nationale [42] ; −0,3, borne prudente de [20]. Sans objet si la carence est maintenue."}
+];
+const PRE = {
+  central:{t:0.14, c:50, b:1.7, w:16, R:1.28, hh:1.2, q:55, a:50, d:2, J:313, x:0.12, m:50, y:0.35, th:[30, 10, 59]},
+  prudent:{t:0, c:0, b:1.7, w:9, R:1.37, hh:1.2, q:55, a:50, d:2, J:313, x:0.54, m:0, y:0.85, th:[50, 20, 59]},
+  fav:{t:0.5, c:100, b:1.7, w:33, R:1.19, hh:1.2, q:55, a:62, d:2, J:313, x:0, m:100, y:-0.3, th:[5, 0, 59]}
+};
+const FIELDS = [["N", "Cas/an (M)", 0.1], ["s", "Salariés (%)", 1], ["p", "S’arrêtent (%)", 0.1], ["D", "Arrêt (j)", 0.1], ["Dp", "Malade au travail (j)", 0.1], ["th", "Avant symptômes θ (%)", 1], ["sar", "Foyer σ (%)", 0.1]];
+const DIS0 = [
+  {n:"Grippe", N:4, s:38, p:70, D:4.8, Dp:2.4, th:30, sar:19, on:true, hl:1, ep:true, src:"N [7] ; s calculé [7, 33] ; p, D [22, 9] ; D′ [31] ; θ [25–27, 57] ; σ [13, 14, 23]. Infectiosité décroissante (demi-vie 1 j [57]) et propagation épidémique [56]."},
+  {n:"Gastro-entérite", N:21, s:31, p:29.1, D:2, Dp:2.9, th:10, sar:20, on:true, src:"N, p, D, D′ [24] ; s calculé [24, 33] ; θ hypothèse [29, 37] ; σ [15, 16]."},
+  {n:"Covid-19", N:1.2, s:38, p:70, D:5, Dp:3, th:59, sar:37, on:true, src:"N [8] ; θ [28] ; σ [17] ; s, p, D, D′ : hypothèses, faute de données publiées depuis 2024. N : 287 000 cas vus en médecine générale en 2024-2025 [61] × 4,3 cas par consultation [62], soit 1,2 M (0,5 à 6,8) ; vague en cours en novembre 2026 [60]."}
+];
+const P = Object.assign({reg:"B", ij100:false, sec100:false, dis:DIS0.map(o => ({...o}))}, PRE.central);
+delete P.th;
+
+const zf = R => { if (!(R > 1)) return 0; let x = 0.5; for (let i = 0; i < 400; i++) x = 1 - Math.exp(-R * x); return x; };
+const If = (d, hl) => hl > 0 ? 1 - Math.pow(2, -d / hl) : d;
+
+function compute(P, reg){
+  const SQ = reg === "0", B = reg === "B";
+  const IJ = B && P.ij100 ? 2 * IJ0 : IJ0, Ps = P.sec100 ? 30 : 19, car = B ? 0 : 3;
+  const t = P.t, c = P.c / 100, be = P.b / 100, w = P.w / 100, q = P.q / 100, a = P.a / 100;
+  let W0s = 0, base = 0, Atot = 0, Acases = 0, gain = 0, cost = 0, secIJ = 0, secH = 0, baseIJ = 0;
+  const per = [];
+  for (const x of P.dis){
+    if (!x.on) continue;
+    const N = x.N * 1e6, s = x.s / 100, p = Math.min(x.p / 100, 1), Dp = x.Dp, th = Math.min(x.th / 100, 1), sg = x.sar / 100;
+    const E = N * s, W0 = Math.min(N * w, E), It = If(t, x.hl), Id = If(Dp, x.hl), P0 = p * It + (1 - p) * Id;
+    const nb = SQ ? 0 : Math.min(be * p, 1 - p);
+    const rem = SQ ? 0 : p * It + nb * Id;
+    const r = P0 > 0 ? (1 - th) * rem / P0 : 0;
+    const A = W0 * r, eps = N > 0 ? A / N : 0, z0 = x.ep ? zf(P.R) : 0;
+    let Ac = A * (1 + sg * P.hh), Aw = A * (1 + sg * P.hh * s), mult = 0;
+    if (z0 > 0 && A > 0){ const C = Math.min(N * (1 - zf(P.R * (1 - eps)) / z0), CAPF * N); if (C > Ac){ Ac = C; Aw = A + (C - A) * s; mult = C / A; } }
+    const K = p * (x.D + t * (1 - q)) + (1 - p) * Dp * (1 - q);
+    const E2 = Math.max(E - Aw, 0), extra = SQ ? 0 : E2 * (p * t * (1 - c) + nb * Dp);
+    const g = Aw * K, co = extra * q;
+    const den = E * (p * t + nb * Dp), rho = den > 0 ? g / den : 0;
+    per.push({n:x.n, r, A, Ac, g, co, rho, eps, mult, bd:E * K});
+    W0s += W0; base += E * K; baseIJ += E * p * IJ0 * Math.max(x.D - 3, 0); Atot += A; Acases += Ac; gain += g; cost += co;
+    secIJ += Aw * p * IJ * Math.max(x.D - car, 0);
+    if (B) secH += extra * IJ;
+  }
+  const cons = SQ ? 0 : S * a, gCons = cons * PC;
+  const G = gCons + (gain - cost) * P.J;
+  const F = Math.max(G, 0) / (P.d * P.J), f = F / (S + F);
+  const wx = 1 - (P.m / 100) * (1 - q), xd = SQ ? 0 : P.x * NE, cx = xd * wx;
+  const yd = B ? P.y * (1 - COV) * NE : 0, cy = yd * wx;
+  const net = G - (cx + cy) * P.J, xs = Math.max(G, 0) / (NE * P.J * wx);
+  const T = B ? (ARR * 3 + S * 2) * IJ : 0;
+  const gSec = SQ ? 0 : cons * Ps + secIJ - secH - (B ? (xd + yd) * IJ : 0);
+  return {SQ, B, IJ, cons, gCons, G, F, f, net, xs, xd, cx, yd, cy, wx, baseIJ, gSec, T, W0s, base, lost:base - gain + cost, Atot, Acases, gain, cost, per};
+}
+
+const nf = (x, d = 0) => x.toLocaleString("fr-FR", {minimumFractionDigits:d, maximumFractionDigits:d}).replace(/[\u202f\u2009]/g, "\u00a0");
+const eur = x => Math.abs(x) >= 1e9 ? nf(x / 1e9, 2) + " Md€" : nf(x / 1e6) + " M€";
+const sg = x => (Math.abs(x) < 5e5 ? "" : x >= 0 ? "+" : "−") + eur(Math.abs(x));
+const pct = x => nf(x * 100, 1) + " %";
+const k3 = x => nf(Math.round(x / 1000) * 1000);
+const mj = x => nf(x / 1e6, 2) + " M";
+const fr = R => R.G > 0 ? R.f : 0;
+const $ = id => document.getElementById(id);
+const LBL = {"0":"On ne change rien", A:"Carence maintenue", B:"Carence supprimée"};
+
+const base = (o, th) => { const q = Object.assign({ij100:false, sec100:false, dis:DIS0.map((x, i) => ({...x, th:th[i]}))}, o); delete q.th; return q; };
+const cB = compute(base(PRE.central, PRE.central.th), "B"), cA = compute(base(PRE.central, PRE.central.th), "A");
+const lo = compute(base(PRE.prudent, PRE.prudent.th), "B"), hi = compute(base(PRE.fav, PRE.fav.th), "B");
+const loA = compute(base(PRE.prudent, PRE.prudent.th), "A"), hiA = compute(base(PRE.fav, PRE.fav.th), "A");
+$("absR").textContent = "Avec les paramètres centraux, l’auto-déclaration évite environ " + k3(cB.Acases) + " cas par an et " + nf(cB.cons / 1e6, 1) + " M de consultations, pour un gain collectif de " + eur(cB.G) + " par an avant toute absence supplémentaire (" + eur(lo.G) + " à " + eur(hi.G) + " entre hypothèses défavorables et favorables). Ce gain est annulé si " + pct(fr(cB)) + " des arrêts courts sont injustifiés, soit " + nf(cB.F * PRE.central.d / NE, 3) + " journée d’absence supplémentaire par salarié et par an. Les effets mesurés vont de zéro (Norvège [41]) à +0,12 journée (Belgique [39]) et +0,54 journée (introduction d’une auto-déclaration de trois jours [32]). Avec la valeur belge, et si la moitié de ces absences sont injustifiées, le bilan de l’auto-déclaration seule est de " + sg(cA.net) + " par an (" + sg(loA.net) + " à " + sg(hiA.net) + "). La suppression de la carence y ajoute un effet propre, estimé à " + sg(cB.net - cA.net) + " par an d’après l’évaluation du jour de carence dans l’Éducation nationale [42], d’où un bilan de " + sg(cB.net) + " par an pour la mesure complète (" + sg(lo.net) + " à " + sg(hi.net) + "). Pour l’Assurance maladie, supprimer la carence transfère environ " + eur(cB.T) + " par an, dont " + eur(COV * cB.T) + " remplacent une indemnisation aujourd’hui versée par les employeurs [19].";
+$("absC").textContent = "Le gain mécanique de la mesure est réel mais repose pour les deux tiers sur une hypothèse de comportement non mesurée (t). Les absences supplémentaires, justifiées ou non, ont en revanche été mesurées, et leur coût dépasse ce gain dans deux des trois évaluations disponibles : en production, le bilan central est négatif, pour l’auto-déclaration seule comme pour la mesure complète. L’intervalle entre hypothèses défavorables et favorables franchit toutefois zéro, parce que les études se contredisent sur l’ampleur des absences supplémentaires [32, 39, 41] et sur le sens de l’effet de la carence [20, 42, 45]. La suppression de la carence est un transfert, dont les deux tiers environ remplacent des versements d’employeurs. Le calcul borne l’enjeu productif, de l’ordre du milliard d’euros par an dans un sens ou dans l’autre ; il ne valorise ni le repos des salariés malades ni la couverture du tiers de salariés aujourd’hui non indemnisés, et ne tranche donc pas à lui seul.";
+
+$("sliders").innerHTML = SL.map(s => `<div class="sl${s.sep ? " sep" : ""}" id="w_${s.id}"><div class="row"><span class="tipw"><label for="s_${s.id}">${s.lab.replace(/\(([^()]+)\)$/, "(<code>$1</code>)")}</label> <button type="button" class="tipb" aria-label="Explication du paramètre">i</button>${tip(s.id)}</span><output id="o_${s.id}"></output></div><input type="range" id="s_${s.id}" min="${s.min}" max="${s.max}" step="${s.step}"><small>${s.note}</small></div>`).join("");
+$("dis").innerHTML = P.dis.map((m, i) => `<div class="dz" id="dz_${i}"><label class="dzh"><input type="checkbox" id="d_on_${i}"> ${m.n}</label><div class="dzg">` +
+  FIELDS.map(([f, l, st]) => `<label><span class="tipw" tabindex="0">${l} <span class="tipb" aria-hidden="true">i</span>${tip(f)}</span><input type="number" id="d_${f}_${i}" step="${st}" min="0" inputmode="decimal"></label>`).join("") + `</div><p class="fn">${m.src}</p></div>`).join("");
+
+function syncInputs(){
+  for (const s of SL) $("s_" + s.id).value = P[s.id];
+  P.dis.forEach((m, i) => { $("d_on_" + i).checked = m.on; for (const [f] of FIELDS) $(`d_${f}_${i}`).value = m[f]; });
+  $("reg0").checked = P.reg === "0"; $("regA").checked = P.reg === "A"; $("regB").checked = P.reg === "B";
+  $("ij100").checked = P.ij100; $("sec100").checked = P.sec100;
+}
+
+function bar(o, mx){
+  const wd = Math.abs(o.v) / mx * 50, col = o.v >= 0 ? "var(--gain)" : "var(--cost)";
+  const pos = o.v >= 0 ? `left:50%;width:${wd}%` : `left:${50 - wd}%;width:${wd}%`;
+  return `<div class="br${o.t ? " tot" : ""}"><div class="lb">${o.l}</div><div class="tr"><span style="${pos};background:${col}"></span></div><div class="v">${sg(o.v)}</div></div>`;
+}
+
+let render = function(){
+  const R = compute(P, P.reg), R0 = compute(P, "0"), RA = compute(P, "A"), RB = compute(P, "B"), fv = fr(R);
+  for (const s of SL) $("o_" + s.id).textContent = nf(+P[s.id], s.dp || 0) + s.u;
+  P.dis.forEach((m, i) => $("dz_" + i).classList.toggle("dis-off", !m.on));
+  $("ijWrap").classList.toggle("off", !R.B); $("ij100").disabled = !R.B;
+  $("secWrap").classList.toggle("off", R.SQ); $("sec100").disabled = R.SQ;
+  const net = X => X.gSec - X.T, opt = (k, v) => compute(Object.assign({}, P, {[k]:v}), P.reg);
+  if (!R.B) $("ijEff").textContent = R.SQ ? "Sans objet dans la situation actuelle." : "Sans objet : avec carence, l’Assurance maladie ne verse rien pendant les trois premiers jours.";
+  else { const on = opt("ij100", true), off = opt("ij100", false);
+    $("ijEff").innerHTML = "Effet : <b>" + sg(net(on) - net(off)) + "/an</b> pour l’Assurance maladie (" + nf(on.IJ, 1) + " € par jour au lieu de " + nf(off.IJ, 1) + " €, par simple doublement), payés sinon par l’employeur (maintien de salaire) ou perdus par le salarié. Bilan collectif inchangé : transfert entre payeurs, comportements supposés identiques."; }
+  if (R.SQ) $("secEff").textContent = "Sans objet dans la situation actuelle.";
+  else { const on = opt("sec100", true), off = opt("sec100", false);
+    $("secEff").innerHTML = "Effet : <b>" + sg(net(on) - net(off)) + "/an</b> pour l’Assurance maladie (30 € économisés par consultation évitée au lieu de 19 €), économisés sinon par les complémentaires et les patients. Bilan collectif inchangé : transfert entre payeurs."; }
+  $("payers").innerHTML = R.SQ
+    ? "<b>Situation actuelle :</b> certificat médical pour tout arrêt ; trois jours de carence, indemnisés par l’employeur pour 66 % des salariés [19]."
+    : R.B
+    ? "<b>Trois premiers jours :</b> indemnisés par l’Assurance maladie dès le premier jour (" + (P.ij100 ? "100 %" : "50 %") + " du salaire, ≈ " + nf(R.IJ, 1) + " € par jour en moyenne)."
+    : "<b>Trois premiers jours :</b> non indemnisés par l’Assurance maladie ; à la charge de l’employeur pour 66 % des salariés, du salarié (perte de salaire) pour les autres.";
+
+  if (R.SQ){
+    $("barsH").textContent = "Situation de référence";
+    $("bars").innerHTML = `<p class="empty">Aucun écart par définition. Les valeurs absolues figurent dans le tableau ci-dessous ; choisir un scénario d’auto-déclaration pour mesurer l’écart.</p>`;
+    for (const k of ["gBig", "fBig", "oBig", "netBig"]) $(k).textContent = "—";
+    $("gSub").textContent = "Situation de référence : aucun changement."; $("fTxt").textContent = ""; $("oSub").textContent = "";
+    $("gauge").style.visibility = "hidden"; $("gTicks").style.visibility = "hidden";
+    $("netBig").style.color = ""; $("netTxt").textContent = "Choisir un scénario d’auto-déclaration pour mesurer l’écart."; $("netNote").textContent = "";
+    $("mbar").textContent = "Situation de référence : " + mj(R0.lost) + " journées perdues par an";
+  } else {
+    $("barsH").textContent = "Détail de ce que rapporte la mesure (M€/an)";
+    const rows = [{l:`Consultations évitées <small>${nf(R.cons / 1e6, 1)} M × ${PC} €</small>`, v:R.gCons}]
+      .concat(R.per.map(x => ({l:`${x.n} <small>+${k3(x.g)} j regagnés (${k3(x.Ac)} cas évités) · −${k3(x.co)} j : malades qui s’arrêtent au lieu de travailler malades</small>`, v:(x.g - x.co) * P.J})));
+    const mx = Math.max(...rows.map(o => Math.abs(o.v)), Math.abs(R.G), 1);
+    $("bars").innerHTML = rows.map(o => bar(o, mx)).join("") + bar({l:`Gain collectif G <small>${R.gain >= R.cost ? nf((R.gain - R.cost) / 1e6, 2) + " M journées regagnées" : nf((R.cost - R.gain) / 1e6, 2) + " M journées perdues"} net + ${nf(R.cons / 1e6, 1)} M consultations</small>`, v:R.G, t:1}, mx);
+    const eqD = Math.max(R.cx + R.cy, 0), Feq = eqD / P.d, fo = Feq / (S + Feq), costX = (R.cx + R.cy) * P.J;
+    $("gBig").textContent = sg(R.G);
+    $("gSub").innerHTML = "Consultations évitées et contaminations en moins, avant toute absence supplémentaire. Détail plus bas.";
+    $("fBig").textContent = pct(fv);
+    $("fTxt").innerHTML = R.G > 0 ? "d’arrêts courts injustifiés au plus, soit ≈ " + k3(R.F) + " arrêts par an. Au-delà, leur coût dépasse ce que rapporte la mesure." : "La mesure ne rapporte rien avec ces paramètres : aucune marge.";
+    $("oBig").textContent = pct(fo);
+    $("oSub").innerHTML = "d’arrêts courts injustifiés, en équivalent : " + nf((R.xd + R.yd) / 1e6, 2) + " M de journées d’absence en plus par an, dont " + nf(100 - P.m) + " % comptées comme injustifiées (paramètre <code>m</code>). Coût : " + sg(-costX) + ".";
+    $("gauge").style.visibility = ""; $("gTicks").style.visibility = "";
+    const max = Math.max(20, Math.ceil(Math.max(fv, fo) * 100 / 20) * 20);
+    $("gFill").style.width = (fv * 100 / max * 100) + "%";
+    $("gMark").style.left = (fv * 100 / max * 100) + "%";
+    $("gObs").style.left = (fo * 100 / max * 100) + "%";
+    $("gTicks").innerHTML = [0, max / 4, max / 2, 3 * max / 4, max].map(t => `<span>${nf(t)} %</span>`).join("");
+    $("netBig").textContent = sg(R.net); $("netBig").style.color = R.net >= 0 ? "var(--gain)" : "var(--cost)";
+    $("netTxt").innerHTML = (R.G <= 0 ? "La mesure ne rapporte rien avant même les absences supplémentaires."
+      : fo > fv ? "Les études retenues prévoient " + nf(fo / fv, 1) + " fois plus d’arrêts injustifiés que la mesure ne peut s’en permettre (" + pct(fo) + " contre " + pct(fv) + ") : le bilan est négatif."
+      : "Les études retenues prévoient moins d’arrêts injustifiés que la mesure ne peut s’en permettre (" + pct(fo) + " contre " + pct(fv) + ") : le bilan est positif.") +
+      " Auto-déclaration : " + (R.xd ? nf(R.xd / 1e6, 2) + " M de journées" : "aucune journée") + " (" + nf(+P.x, 2) + " j × " + nf(NE / 1e6, 1) + " M de salariés du privé), " + sg(-R.cx * P.J) + "." +
+      (R.B ? " Suppression de la carence : " + (R.yd >= 0 ? "" : "−") + nf(Math.abs(R.yd) / 1e6, 2) + " M de journées (" + nf(+P.y, 2) + " j × " + nf((1 - COV) * NE / 1e6, 1) + " M de salariés non couverts), " + sg(-R.cy * P.J) + "." : " Carence maintenue : pas d’effet propre.") +
+      " Une journée injustifiée coûte une journée de travail ; une journée justifiée (salarié malade qui travaillait malade) en coûte " + nf(P.q / 100, 2) + ".";
+    $("netNote").innerHTML = "Les études ne s’accordent pas : choisir l’étude retenue change ③ et le résultat. Non compté : un éventuel effet sur les arrêts de plus de trois mois, que l’évaluation française ne détecte pas [42] ; à titre d’échelle, 1 % des 286 M de journées indemnisées [2] vaut " + eur(LONGD * 0.01 * P.J) + ".";
+    $("mbar").textContent = "Seuil : " + pct(fv) + " · Bilan net : " + sg(R.net) + "/an";
+  }
+
+  fillSel("selX", OX, +P.x); fillSel("selY", OY, +P.y); $("selYw").style.display = R.B ? "" : "none";
+  const cols = [["0", R0], ["A", RA], ["B", RB]];
+  const cAbs = -(R0.lost * P.J + S * PC), aAbs = -(S * 19 + R0.baseIJ);
+  $("absNote").hidden = !P.abs;
+  $("absNote").innerHTML = "Valeurs absolues sur le seul périmètre du modèle : arrêts de 1 à 3 jours et maladies cochées. Coût collectif actuel : " + mj(R0.lost) + " journées perdues × " + P.J + " € + " + mj(S) + " consultations × " + PC + " € = " + eur(-cAbs) + " par an. Assurance maladie aujourd’hui : " + mj(S) + " consultations × 19 € + " + eur(R0.baseIJ) + " d’indemnités versées au-delà du délai de carence pour les maladies cochées = " + eur(-aAbs) + " par an. Pour mémoire, l’ensemble des indemnités journalières maladie du régime général atteint 10,2 Md€ par an [2] : l’essentiel concerne des arrêts longs, hors du champ de la mesure. Les transferts restent affichés en écart.";
+  const th = cols.map(([k]) => `<th class="${k === P.reg ? "sel" : ""}">${LBL[k]}</th>`).join("");
+  const cell = (k, main, delta) => `<td class="${k === P.reg ? "sel" : ""}">${main}${delta ? `<small>${delta}</small>` : ""}</td>`;
+  const dl = (v, f) => (Math.abs(v) < 1e-9 ? "±0" : (v > 0 ? "+" : "−") + f(Math.abs(v)));
+  const row = (lab, fn) => `<tr${lab.startsWith("Solde") ? ' class="hl" id="secRow"' : lab.startsWith("Bilan") ? ' class="hl"' : ""}><td>${lab}</td>${cols.map(([k, X]) => fn(k, X)).join("")}</tr>`;
+  $("cmp").innerHTML = `<thead><tr><th></th>${th}</tr></thead><tbody>` +
+    row("Contaminations au travail", (k, X) => cell(k, mj(X.W0s - X.Atot), k === "0" ? "" : dl(-X.Atot, mj))) +
+    row("Cas évités (travail et foyers)", (k, X) => cell(k, k === "0" ? "—" : k3(X.Acases))) +
+    row("Journées perdues", (k, X) => cell(k, mj(X.lost), k === "0" ? "" : dl(X.lost - R0.lost, mj))) +
+    row("Consultations (arrêts courts)", (k, X) => cell(k, mj(S - X.cons), k === "0" ? "" : dl(-X.cons, mj))) +
+    row("Généralistes libérés (équivalents temps plein)", (k, X) => cell(k, k === "0" ? "—" : nf(Math.round(X.cons / ETP / 10) * 10), k === "0" ? "" : nf(X.cons / GP * 100, 1) + " % de l’activité")) +
+    row("Seuil d’arrêts injustifiés", (k, X) => cell(k, k === "0" ? "—" : pct(fr(X)))) +
+    (P.abs
+      ? row("Bilan collectif : coût total", (k, X) => cell(k, sg(cAbs + X.net), k === "0" ? "journées perdues et consultations" : "soit " + sg(X.net))) +
+        row("Solde de l’Assurance maladie", (k, X) => cell(k, sg(aAbs + X.gSec - X.T), k === "0" ? "consultations et indemnités" : "soit " + sg(X.gSec - X.T) + (X.B ? ", dont −" + eur(X.T) + " de transfert" : "")))
+      : row("Bilan collectif net", (k, X) => cell(k, k === "0" ? "référence" : sg(X.net), k === "0" ? "" : "absences supplémentaires comprises")) +
+        row("Solde de l’Assurance maladie", (k, X) => cell(k, k === "0" ? "référence" : sg(X.gSec - X.T), X.B ? "dont −" + eur(X.T) + " de transfert" : ""))) +
+    row("Transfert reçu par les employeurs", (k, X) => cell(k, X.B ? sg(COV * X.T) : "—", X.B ? "indemnisation de la carence qu’ils n’ont plus à verser" : "")) +
+    row("Transfert reçu par les salariés non couverts", (k, X) => cell(k, X.B ? sg((1 - COV) * X.T) : "—", X.B ? "revenu aujourd’hui perdu" : "")) +
+    row("Coût d’un arrêt injustifié pour l’Assurance maladie", (k, X) => cell(k, k === "0" ? "—" : X.B ? nf(P.d * X.IJ) + " €" : "0 €", X.B ? "" : k === "A" ? "carence" : "")) +
+    `</tbody>`;
+
+  if (R.SQ){
+    $("eq").innerHTML = ["Journées perdues = Σ N s K = " + R0.per.map(x => mj(x.bd) + " (" + x.n.toLowerCase() + ")").join(" + ") + " = " + mj(R0.lost),
+      "Contaminations au travail = Σ N w = " + mj(R0.W0s),
+      "Consultations pour arrêts courts : S = " + mj(S)].map(t => `<div>${t}</div>`).join("");
+  } else {
+    $("eq").innerHTML = R.per.map(x => `${x.n} : r = ${pct(x.r)} de la transmission au travail évitée` + (x.mult ? ` ; transmission totale −${pct(x.eps)} ; cas évités ${k3(x.Ac)}, soit ${nf(x.mult, 1)} fois les contaminations directes` : ` ; cas évités ${k3(x.Ac)} (première génération)`))
+      .concat(["ρ, journées regagnées par journée de présence malade évitée : " + R.per.map(x => x.n.toLowerCase() + " " + nf(x.rho, 2)).join(" ; ") + " (q = " + nf(P.q / 100, 2) + ")",
+        "G = " + nf(R.cons / 1e6, 2) + " M × " + PC + " € + " + P.J + " € × (" + mj(R.gain) + " − " + mj(R.cost) + " j) = " + sg(R.G),
+        "F* = G ÷ (" + nf(+P.d, 1) + " j × " + P.J + " €) = " + k3(R.F) + " arrêts ;  f* = F* ÷ (S + F*) = " + pct(fv),
+        "Bilan net = G − (" + nf(R.xd / 1e6, 2) + " M + " + nf(R.yd / 1e6, 2) + " M j) × " + P.J + " € × " + nf(R.wx, 3) + " = " + sg(R.net)])
+      .map(t => `<div${t.startsWith("ρ") ? ' class="wr"' : ""}>${t}</div>`).join("");
+  }
+};
+
+const render0 = render;
+render = function(){
+  render0();
+  linkRefs(document.querySelector("main"));
+  if (document.querySelectorAll){
+    const els = [...document.querySelectorAll("#gBig,#fBig,#oBig,#netBig,#bars .v,#cmp td,#eq div")], now = els.map(e => e.textContent);
+    if (prevVals && prevVals.length === now.length) els.forEach((e, i) => { if (now[i] !== prevVals[i]){ e.classList.remove("chg"); void e.offsetWidth; e.classList.add("chg"); } });
+    prevVals = now;
+  }
+};
+$("sliders").addEventListener("input", e => { P[e.target.id.slice(2)] = +e.target.value; render(); });
+for (const id of ["reg0", "regA", "regB"]) $(id).addEventListener("change", e => { P.reg = e.target.value; render(); });
+const flash = () => { const r = $("secRow"); if (r){ r.classList.remove("flash"); void r.offsetWidth; r.classList.add("flash"); } };
+$("selX").addEventListener("change", e => { if (e.target.value !== "c"){ P.x = OX[+e.target.value][0]; syncInputs(); render(); } });
+$("selY").addEventListener("change", e => { if (e.target.value !== "c"){ P.y = OY[+e.target.value][0]; syncInputs(); render(); } });
+for (const id of ["modeD", "modeA"]) $(id).addEventListener("change", e => { P.abs = e.target.value === "a"; render(); });
+$("ij100").addEventListener("change", e => { P.ij100 = e.target.checked; render(); flash(); });
+$("sec100").addEventListener("change", e => { P.sec100 = e.target.checked; render(); flash(); });
+$("dis").addEventListener("input", e => {
+  const m = e.target.id.match(/^d_(on|N|s|p|D|Dp|th|sar)_(\d)$/); if (!m) return;
+  const o = P.dis[+m[2]];
+  if (m[1] === "on") o.on = e.target.checked; else o[m[1]] = Math.max(0, +e.target.value || 0);
+  render();
+});
+document.querySelector(".presets").addEventListener("click", e => {
+  const k = e.target.dataset && e.target.dataset.p; if (!k) return;
+  const { th, ...rest } = PRE[k];
+  Object.assign(P, rest); P.dis.forEach((m, i) => { m.th = th[i]; });
+  syncInputs(); render();
+});
+$("rRow").textContent = nf(cB.per[0].r * 100) + " % (" + nf(lo.per[0].r * 100) + "–" + nf(hi.per[0].r * 100) + ")";
+syncInputs(); render();
+linkRefs(document.body);
+if (document.querySelectorAll) document.querySelectorAll("ol.refs li").forEach((li, i) => { if (!li.querySelector("a")) li.insertAdjacentHTML("beforeend", ` <a href="${REFURL[i + 1]}" target="_blank" rel="noopener">${REFURL[i + 1].startsWith("https://www.google.com/search") ? "Rechercher" : "Ouvrir"}</a>`); });
+}
+</script>
+<script>
+{const b=document.getElementById("themeBtn");let t="dark";try{t=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){}
+const ap=()=>{document.documentElement.setAttribute("data-theme",t);b.textContent=t==="light"?"Thème sombre":"Thème clair";b.setAttribute("aria-pressed",String(t==="light"))};ap();
+b.addEventListener("click",()=>{t=t==="light"?"dark":"light";try{localStorage.setItem("theme",t)}catch(e){}ap()});}
+</script>
+</body>
+</html>
