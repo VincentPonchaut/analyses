@@ -121,6 +121,8 @@ ul.notes li{font-size:.9rem;color:var(--ink-2);line-height:1.55;margin-bottom:8p
 .tip-r b{font-weight:600;font-variant-numeric:tabular-nums}
 .tip-x{color:var(--ink-2);margin-top:6px}
 .tip-s{border-top:1px solid var(--ring);margin-top:7px;padding-top:5px}
+.tip-e{margin-top:3px;line-height:1.4}
+.tip-e span{color:var(--ink-muted);white-space:nowrap}
 /* --------------------------------------------------------------- tableaux */
 .scroll{overflow-x:auto}
 .tbox{max-height:36rem;overflow:auto}
@@ -263,7 +265,7 @@ a:hover,a:focus-visible{color:var(--ink);text-decoration-color:currentColor}
     (injures) à la plus marquée (atteinte à la vie).</p>
   <div class="legend" id="legende"></div>
   <div class="chart" id="ch-general"><div class="tip"></div></div>
-  <p class="caption">Survolez une barre pour le détail par niveau et la liste des partis concernés.</p>
+  <p class="caption">Survolez une barre pour le détail par parti et par niveau.</p>
 </div>
 
 <div class="card">
@@ -792,9 +794,25 @@ function bars(box, rows, o) {
 }
 
 function catHead(r) {
-  if (r.type === 'camp') { const c = CAMP[r.k]; return `<div class="tip-h">${esc(c.titre || c.k)}</div>${campInfo(r.k)}`; }
+  if (r.type === 'camp') { const c = CAMP[r.k]; return `<div class="tip-h">${esc(c.titre || c.k)}</div>`; }
   const p = PARTI[r.k];
-  return `<div class="tip-h">${esc(p.court)}</div><div class="tip-p">${esc(p.nom)}</div><div class="tip-x">Camp : ${esc((CAMP[p.camp] || {}).titre || p.camp)}</div>`;
+  return `<div class="tip-h">${esc(p.court)}</div><div class="tip-x" style="margin-top:0">${esc(p.nom)} · ${esc((CAMP[p.camp] || {}).titre || p.camp)}</div>`;
+}
+// Détail d'une barre : par parti pour un camp, sinon la liste des épisodes.
+function detail(r, niv) {
+  const eps = sel().filter(x => x[state.grp] === r.k && (!niv || x.niveau === niv));
+  const partis = r.type === 'camp' ? PARTIS.filter(p => p.camp === r.k && !p.k.startsWith('Hors parti')) : [];
+  if (partis.length) {
+    const ps = partis.map((p, i) => ({ k: p.k, lab: p.court, i, n: eps.filter(e => e.parti === p.k).length }));
+    eps.forEach(e => { if (!ps.some(o => o.k === e.parti)) ps.push({ k: e.parti, lab: courtParti(e.parti), i: 99, n: eps.filter(x => x.parti === e.parti).length }); });
+    ps.sort((a, b) => b.n - a.n || a.i - b.i);
+    return ps.map(o => trow(o.lab, plur(o.n, 'épisode'))).join('');
+  }
+  if (!eps.length) return '<div class="tip-x">Aucun épisode</div>';
+  const top = eps.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+  const more = eps.length - top.length;
+  return top.map(e => `<div class="tip-e"><span>${esc(fdate(e.date))}</span> ${esc(e.victime.length > 60 ? e.victime.slice(0, 59) + '…' : e.victime)}</div>`).join('') +
+    (more ? `<div class="tip-x">et ${plur(more, 'autre')}</div>` : '');
 }
 
 function drawGeneral() {
@@ -805,8 +823,8 @@ function drawGeneral() {
   });
 }
 function tipGeneral(r) {
-  return catHead(r) + `<div class="tip-s">` + trow('Total', plur(r.total, 'épisode')) +
-    r.v.map((v, k) => trow(`${k + 1} ${NIV[k]}`, nf.format(v), `var(--l${k + 1})`)).join('') + '</div>';
+  const niv = r.v.map((v, k) => trow(`${k + 1} ${NIV[k]}`, nf.format(v), `var(--l${k + 1})`)).join('');
+  return catHead(r) + (r.type === 'camp' ? detail(r, 0) : '') + `<div class="tip-s">${niv}</div>`;
 }
 
 function drawMinis() {
@@ -824,9 +842,14 @@ function drawMinis() {
   });
 }
 function tipMini(r) {
-  let s = catHead(r) + '<div class="tip-s">' + trow(`${r.niv} ${NIV[r.niv - 1]}`, plur(r.total, 'épisode'));
-  if (r.niv === 6 && r.total) s += `<div class="tip-x">dont ${plur(r.morts, 'homicide')}, ${plur(r.cibles, 'nom', 'noms')} sur une liste de cibles</div>`;
-  return s + '</div>';
+  let s = catHead(r) + detail(r, r.niv);
+  if (r.niv === 6 && r.total) {
+    const parts = [];
+    if (r.morts) parts.push(plur(r.morts, 'homicide'));
+    if (r.cibles) parts.push(plur(r.cibles, 'inscription sur une liste de cibles', 'inscriptions sur une liste de cibles'));
+    if (parts.length) s += `<div class="tip-x tip-s">Dont ${parts.join(', ')}</div>`;
+  }
+  return s;
 }
 
 function drawDeputes() {
