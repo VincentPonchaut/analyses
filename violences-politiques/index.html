@@ -593,8 +593,9 @@ a:hover,a:focus-visible{color:var(--ink);text-decoration-color:currentColor}
    0. Réglages de la page
    ================================================================== */
 // Adresse qui reçoit les propositions envoyées par e-mail.
-// Laisser vide pour masquer le bouton « Envoyer par e-mail ».
-const CONTACT_EMAIL = '';
+// Assemblée en deux morceaux pour ne pas apparaître telle quelle aux robots qui collectent les adresses.
+// Laisser vide ('') pour masquer le bouton « Envoyer par e-mail ».
+const CONTACT_EMAIL = ['ponchaut.vincent', 'gmail.com'].join('@');
 const GITHUB_ISSUES = 'https://github.com/VincentPonchaut/analyses/issues/new';
 const PAGE_URL = 'https://vincentponchaut.github.io/analyses/violences-politiques/';
 
