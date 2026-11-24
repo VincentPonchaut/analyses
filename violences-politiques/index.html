@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Qui est visé par les menaces et les violences politiques en France ?</title>
+<meta name="description" content="Menaces et violences visant élus, candidats, militants et locaux politiques en France depuis juin 2024, classées selon le camp de la victime et le degré de violence, à partir de la presse. Page ouverte aux contributions.">
+<script>try{if(localStorage.getItem('theme')==='light')document.documentElement.setAttribute('data-theme','light')}catch(e){}</script>
+<style>
+/* ------------------------------------------------------------------ palette */
+:root{                 /* thème sombre par défaut */
+  color-scheme: dark;
+  --plane:#0d0d0d; --surface:#1a1a19;
+  --ink:#ffffff; --ink-2:#c3c2b7; --ink-muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --ring:rgba(255,255,255,.10);
+  --acc:#3987e5; --on-acc:#ffffff;
+  --tip-bg:#242422; --tip-shadow:0 6px 24px rgba(0,0,0,.5);
+  --warn:#f39a3d;
+}
+:root[data-theme="light"]{   /* variante claire, au choix du lecteur */
+  color-scheme: light;
+  --plane:#f9f9f7; --surface:#fcfcfb;
+  --ink:#0b0b0b; --ink-2:#52514e; --ink-muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --ring:rgba(11,11,11,.10);
+  --acc:#2a78d6; --on-acc:#ffffff;
+  --tip-bg:#ffffff; --tip-shadow:0 6px 24px rgba(11,11,11,.14);
+  --warn:#c4650f;
+}
+:root{  /* degrés de violence : une seule teinte, du plus discret au plus intense */
+  --l1:color-mix(in oklab,var(--acc) 24%,var(--surface));
+  --l2:color-mix(in oklab,var(--acc) 44%,var(--surface));
+  --l3:color-mix(in oklab,var(--acc) 68%,var(--surface));
+  --l4:var(--acc);
+  --l5:color-mix(in oklab,var(--acc) 68%,var(--ink));
+  --l6:color-mix(in oklab,var(--acc) 40%,var(--ink));
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--plane); color:var(--ink);
+  font:400 16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:1060px;margin:0 auto;padding:28px 20px 56px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;font-size:.88rem}
+.topbar a{color:var(--ink-muted);text-decoration:none}
+.topbar a:hover,.topbar a:focus-visible{color:var(--ink)}
+h1{font-size:1.6rem;line-height:1.2;margin:0 0 8px;letter-spacing:-.01em}
+h2{font-size:1.15rem;line-height:1.3;margin:0 0 4px;letter-spacing:-.005em}
+h3{font-size:.95rem;margin:0 0 4px}
+.theme{
+  font:inherit;font-size:.8rem;color:var(--ink-2);background:transparent;flex:none;
+  border:1px solid var(--axis);border-radius:999px;padding:5px 12px;cursor:pointer;
+}
+.theme:hover,.theme:focus-visible{color:var(--ink);border-color:var(--ink-muted)}
+.sub{color:var(--ink-2);margin:0;font-size:.95rem;max-width:75ch}
+.byline{color:var(--ink-muted);font-size:.8rem;margin:8px 0 0}
+.scope{color:var(--ink-2);font-size:.88rem;margin:8px 0 0}
+.card{
+  background:var(--surface);border:1px solid var(--ring);border-radius:14px;
+  padding:18px 18px 14px;margin:20px 0;
+}
+.card.warn{border-left:3px solid var(--warn)}
+.lead{color:var(--ink-2);font-size:.9rem;margin:0 0 12px;line-height:1.5;max-width:80ch}
+p{margin:0 0 10px}
+.card p{font-size:.92rem;line-height:1.55;color:var(--ink-2)}
+.card p b,ul.notes b{color:var(--ink);font-weight:600}
+.muted{color:var(--ink-muted)}
+/* --------------------------------------------------------------- chiffres clés */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:18px 22px}
+.ro-b{font-size:clamp(2rem,6vw,2.6rem);line-height:1;letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums}
+.ro-c{color:var(--ink-2);font-size:.85rem;margin-top:6px}
+.ro-extra{margin:16px 0 0;padding-top:12px;border-top:1px solid var(--ring)}
+.ro-extra p{margin:0;font-size:.9rem;color:var(--ink-2);display:flex;align-items:baseline;gap:8px}
+.ro-extra p+p{margin-top:7px}
+.ro-extra b{color:var(--ink);font-weight:600}
+.glyph{color:var(--ink-muted);flex:none;font-size:1rem;line-height:1}
+ul.notes{margin:4px 0 0;padding-left:20px}
+ul.notes li{font-size:.9rem;color:var(--ink-2);line-height:1.55;margin-bottom:8px}
+/* --------------------------------------------------------------- camps */
+.camps{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 2px}
+.chip{display:inline-block;font-size:.83rem;color:var(--ink);border:1px solid var(--axis);border-radius:999px;padding:3px 11px;cursor:help;background:transparent}
+.chip:hover,.chip:focus-visible{border-color:var(--ink-muted);outline:none}
+.lbl{cursor:help;text-decoration:underline dotted var(--ink-muted);text-underline-offset:3px}
+.lbl:focus-visible{outline:2px solid var(--acc);outline-offset:2px;border-radius:3px}
+.chip.lbl{text-decoration:none}
+/* --------------------------------------------------------------- réglages */
+.controls{display:flex;flex-wrap:wrap;gap:12px 26px;align-items:center}
+.ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.ctl-l{font-size:.8rem;color:var(--ink-muted)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--axis);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:.82rem;padding:6px 11px;border:0;background:transparent;color:var(--ink-2);cursor:pointer}
+.seg button+button{border-left:1px solid var(--axis)}
+.seg button:hover{color:var(--ink)}
+.seg button[aria-pressed="true"]{background:color-mix(in oklab,var(--acc) 16%,transparent);color:var(--ink);font-weight:600}
+.ctl-note{font-size:.8rem;color:var(--ink-muted);margin:10px 0 0}
+/* --------------------------------------------------------------- graphiques */
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;margin:6px 0 10px;font-size:.83rem;color:var(--ink-2)}
+.key{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.sq{width:11px;height:11px;border-radius:3px;flex:none;display:inline-block}
+.chart{position:relative;touch-action:pan-y}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.caption{color:var(--ink-muted);font-size:.78rem;margin:8px 2px 2px;line-height:1.45}
+.minis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px 26px;margin-top:8px}
+.mini{display:flex;flex-direction:column}
+.mini .chart{margin-top:auto}
+.mini h3{font-size:.9rem;margin:0}
+.mini p{font-size:.8rem;color:var(--ink-muted);margin:0 0 6px;line-height:1.4}
+/* --------------------------------------------------------------- infobulles */
+.tip,#ltip{
+  position:absolute;top:0;left:0;pointer-events:none;opacity:0;
+  transition:opacity .12s;background:var(--tip-bg);color:var(--ink);
+  border:1px solid var(--ring);border-radius:10px;box-shadow:var(--tip-shadow);
+  padding:10px 12px;min-width:200px;max-width:290px;font-size:.8rem;line-height:1.45;z-index:3;
+}
+#ltip{position:fixed;z-index:20;max-width:320px}
+.tip.on,#ltip.on{opacity:1}
+.tip-h{font-size:1rem;font-weight:600;letter-spacing:-.01em;margin-bottom:4px}
+.tip-p{color:var(--ink);margin-bottom:4px}
+.tip-r{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:3px}
+.tip-r span:first-child{color:var(--ink-2);display:inline-flex;align-items:center;gap:6px}
+.tip-r b{font-weight:600;font-variant-numeric:tabular-nums}
+.tip-x{color:var(--ink-2);margin-top:6px}
+.tip-s{border-top:1px solid var(--ring);margin-top:7px;padding-top:5px}
+.tip-e{margin-top:3px;line-height:1.4}
+.tip-e span{color:var(--ink-muted);white-space:nowrap}
+/* --------------------------------------------------------------- tableaux */
+.scroll{overflow-x:auto}
+.tbox{max-height:36rem;overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:.84rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--ring);vertical-align:top}
+th.l,td.l{text-align:left}
+thead th{color:var(--ink-2);font-weight:500;font-size:.78rem;white-space:nowrap;position:sticky;top:0;background:var(--surface);z-index:1}
+tbody tr:last-child td{border-bottom:none}
+.ep{min-width:1060px}
+.ep td.v{min-width:150px}
+.ep td.d{white-space:nowrap;color:var(--ink-2)}
+.ep td.t{color:var(--ink);line-height:1.5;min-width:260px}
+.ep td .sq{margin-right:6px;vertical-align:-1px}
+.ep td.n{color:var(--ink-muted);white-space:nowrap}
+.ep .src{max-width:180px}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;border:1px solid var(--axis);font-size:.74rem;white-space:nowrap;color:var(--ink-2)}
+.pill.faible{border-color:color-mix(in oklab,var(--warn) 60%,transparent);color:var(--warn)}
+.pill.haute{border-color:color-mix(in oklab,var(--acc) 60%,transparent);color:var(--ink)}
+.small{display:block;color:var(--ink-muted);font-size:.74rem;margin-top:3px}
+.filters{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;margin:4px 0 12px}
+select,input,textarea{
+  font:inherit;font-size:.87rem;color:var(--ink);background:var(--plane);
+  border:1px solid var(--axis);border-radius:7px;padding:6px 10px;
+}
+select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.search{width:100%;max-width:300px}
+.count{color:var(--ink-muted);font-size:.8rem}
+.fix{all:unset;cursor:pointer;color:var(--ink-muted);font-size:.78rem;text-decoration:underline;text-underline-offset:2px;white-space:nowrap}
+.fix:hover,.fix:focus-visible{color:var(--ink)}
+/* --------------------------------------------------------------- contribution */
+form fieldset{border:0;padding:0;margin:0 0 12px;display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center}
+form legend{font-size:.85rem;color:var(--ink-2);margin-bottom:6px;width:100%;padding:0}
+form fieldset label{font-size:.88rem;color:var(--ink);display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:12px 16px}
+.f{display:flex;flex-direction:column;gap:4px;font-size:.8rem;color:var(--ink-2)}
+.f.wide{grid-column:1/-1}
+.f[hidden]{display:none}
+.f textarea{resize:vertical;min-height:4.5em}
+.req::after{content:" *";color:var(--warn)}
+.hint{font-size:.8rem !important;color:var(--ink-muted) !important;margin:12px 0 0 !important}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+.btn{
+  font:inherit;font-size:.87rem;cursor:pointer;border-radius:8px;padding:8px 14px;
+  border:1px solid var(--axis);background:transparent;color:var(--ink);text-decoration:none;display:inline-block;
+}
+.btn:hover,.btn:focus-visible{border-color:var(--ink-muted)}
+.btn.primary{background:var(--acc);border-color:var(--acc);color:var(--on-acc);font-weight:600}
+.btn.primary:hover,.btn.primary:focus-visible{background:color-mix(in oklab,var(--acc) 85%,var(--ink))}
+.btn[hidden]{display:none}
+#f-msg{font-size:.84rem;color:var(--ink-2)}
+#f-msg.err{color:var(--warn)}
+pre#f-preview{white-space:pre-wrap;font:inherit;font-size:.8rem;color:var(--ink-2);background:var(--plane);border:1px solid var(--ring);border-radius:8px;padding:10px 12px;margin:8px 0 0}
+/* --------------------------------------------------------------- méthode */
+details{margin:20px 0;border-top:1px solid var(--ring);padding-top:14px}
+details.card{border-top:1px solid var(--ring)}
+summary{cursor:pointer;font-size:.95rem;font-weight:600}
+details h3{font-size:.86rem;margin:20px 0 8px;color:var(--ink-2);font-weight:600}
+details p,details li{font-size:.85rem;color:var(--ink-2);line-height:1.6}
+details ul{padding-left:20px;margin:6px 0}
+form details{margin:12px 0 0;border:0;padding:0}
+form summary{font-size:.84rem;font-weight:500;color:var(--ink-2)}
+footer{color:var(--ink-muted);font-size:.78rem;line-height:1.6;margin-top:26px;border-top:1px solid var(--ring);padding-top:14px}
+a{color:var(--ink-2);text-decoration:underline;text-underline-offset:2px;
+  text-decoration-thickness:1px;text-decoration-color:var(--axis)}
+a:hover,a:focus-visible{color:var(--ink);text-decoration-color:currentColor}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:560px){
+  .wrap{padding:20px 14px 40px}
+  .card{padding:14px 12px 10px}
+  h1{font-size:1.4rem}
+}
+@media print{.controls,.filters,#contribuer,.fix,.theme{display:none}details{display:block}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar"><a href="../">← Toutes les analyses</a><button type="button" class="theme" id="theme" aria-pressed="false">Thème clair</button></div>
+
+<header>
+  <h1>Qui est visé par les menaces et les violences politiques ?</h1>
+  <p class="sub">Épisodes rendus publics par la presse entre le 9&nbsp;juin&nbsp;2024 et le 24&nbsp;novembre&nbsp;2026, classés selon le camp
+    de la victime et le degré de violence. La page ne cherche pas à désigner les auteurs. Elle est ouverte aux contributions :
+    <a href="#contribuer">proposer un fait ou une correction</a>.</p>
+  <p class="scope">Faits rendus publics par la presse, chacun avec sa source : pas un comptage exhaustif. <a href="#methode">Méthode et limites</a></p>
+  <p class="byline">Recensement et page : Claude Opus 5.5 (Anthropic), à la demande des auteurs du site · relevé arrêté au 24 novembre 2026</p>
+</header>
+
+<div class="card" id="synthese">
+  <div class="kpis">
+    <div><div class="ro-b" id="k-total">—</div><div class="ro-c">épisodes recensés</div></div>
+    <div><div class="ro-b" id="k-gauche">—</div><div class="ro-c">visent la gauche ou la gauche radicale</div></div>
+    <div><div class="ro-b" id="k-centre">—</div><div class="ro-c">visent le centre</div></div>
+    <div><div class="ro-b" id="k-droite">—</div><div class="ro-c">visent la droite ou l’extrême droite</div></div>
+    <div><div class="ro-b" id="k-hors">—</div><div class="ro-c" id="k-hors-c">visent des militants sans parti</div></div>
+  </div>
+  <div class="ro-extra" id="k-extra"></div>
+</div>
+
+<div class="card" id="reglages">
+  <h2>Les camps</h2>
+  <p class="lead">Survolez un camp (ou touchez-le sur téléphone) pour voir les partis qu’il regroupe et la façon dont il est classé officiellement.</p>
+  <div class="camps" id="camps"></div>
+  <div class="controls" style="margin-top:16px">
+    <div class="ctl"><span class="ctl-l">Épisodes pris en compte</span>
+      <span class="seg" role="group" aria-label="Épisodes pris en compte">
+        <button type="button" data-base="tous" aria-pressed="true">Tous</button>
+        <button type="button" data-base="constats" aria-pressed="false">Faits établis seulement</button>
+        <button type="button" data-base="fiables" aria-pressed="false">Sans les sources faibles</button>
+      </span></div>
+    <div class="ctl"><span class="ctl-l">Regrouper</span>
+      <span class="seg" role="group" aria-label="Regrouper">
+        <button type="button" data-grp="camp" aria-pressed="true">Par camp</button>
+        <button type="button" data-grp="parti" aria-pressed="false">Par parti</button>
+      </span></div>
+  </div>
+  <p class="ctl-note">Ces réglages s’appliquent à tous les graphiques, au tableau des plaintes et à la liste des épisodes.
+    « Fait établi » : enquête ouverte, interpellation, image, revendication ou plainte enregistrée. « Source faible » : agrégateur,
+    site militant ou fait rapporté de façon vague.</p>
+</div>
+
+<div class="card">
+  <h2>Tous niveaux confondus</h2>
+  <p class="lead">Nombre d’épisodes selon le camp de la victime. Chaque nuance est un degré de violence, de la plus discrète
+    (injures) à la plus marquée (atteinte à la vie).</p>
+  <div class="legend" id="legende"></div>
+  <div class="chart" id="ch-general"><div class="tip"></div></div>
+  <p class="caption">Survolez une barre pour le détail par parti et par niveau.</p>
+</div>
+
+<div class="card">
+  <h2>Par degré de violence</h2>
+  <p class="lead">Un graphique par niveau, tous à la même échelle pour pouvoir les comparer.</p>
+  <div class="minis" id="minis"></div>
+</div>
+
+<div class="card">
+  <h2>Plaintes connues</h2>
+  <p class="lead">Épisodes pour lesquels la presse mentionne une plainte. Porter plainte dépend aussi du choix de la victime,
+    et la presse ne le signale pas toujours : une part faible ne veut pas dire qu’aucune plainte n’a été déposée.</p>
+  <div class="scroll"><table id="t-plaintes">
+    <thead><tr><th class="l">Camp de la victime</th><th>Épisodes</th><th>Plainte mentionnée</th><th>Part</th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+</div>
+
+<div class="card">
+  <h2>Rapporté au nombre de députés</h2>
+  <p class="lead">Épisodes visant un député en exercice ou sa permanence, pour 100 députés de son groupe. La base est étroite :
+    à lire comme un ordre de grandeur, pas comme un classement.</p>
+  <div class="chart" id="ch-deputes"><div class="tip"></div></div>
+  <p class="caption">Effectifs des groupes de l’Assemblée nationale : datan.fr, consulté le 24 novembre 2026.</p>
+</div>
+
+<div class="card" id="officiels">
+  <h2>Et les chiffres officiels ?</h2>
+  <p>Le seul décompte systématique par parti est celui des services de l’État. Selon <a href="https://www.europe1.fr/police-justice/info-europe-1-les-atteintes-visant-les-personnalites-politiques-ont-plus-que-double-durant-la-periode-pre-electorale-de-2026-par-rapport-aux-municipales-de-2020-939176" rel="noopener" target="_blank">Europe&nbsp;1</a>
+    (printemps 2026), qui cite des chiffres du renseignement territorial non publiés, plus de la moitié des atteintes de la période
+    préélectorale des municipales visaient des élus ou candidats de droite, et ceux du RN ont été <b>quatre fois plus concernés que ceux de LFI</b>.
+    Le Centre d’analyse et de lutte contre les atteintes aux élus (ministère de l’Intérieur) a compté environ 1&nbsp;300 atteintes
+    sur cette période, plus du double de 2020 (<a href="https://www.banquedesterritoires.fr/les-agressions-contre-les-elus-toujours-aussi-nombreuses" rel="noopener" target="_blank">Banque des territoires</a>, 30 juin 2026).</p>
+  <p><b>Ce que dit la presse sur la même période.</b> <span id="cmp-officiels">—</span></p>
+  <p>La page ne reprend pas ces chiffres, pour trois raisons :</p>
+  <ul class="notes">
+    <li><b>Ils ne sont pas publiés.</b> On ne connaît ni la définition d’une « atteinte », ni la façon d’attribuer un parti à la
+      victime, ni le nombre de candidats de chaque parti, sans lequel « quatre fois plus » ne se compare pas.</li>
+    <li><b>Le gouvernement est partie prenante</b> d’un sujet où chaque camp accuse l’autre.</li>
+    <li><b>L’indépendance de ces services est mise en cause.</b> Le 19 octobre 2026, Mediapart a publié un échange écrit dans lequel
+      un commissaire du renseignement territorial affirme qu’on lui demande d’écrire que LFI est derrière le mouvement du
+      17 octobre, ce qui serait « objectivement faux de l’avis général des RT ». Le ministère de l’Intérieur dément avoir donné
+      de telles consignes ; LFI a annoncé saisir la Cour de justice de la République contre le ministre, Laurent Nuñez
+      (<a href="https://lcp.fr/actualites/17-octobre-lfi-accuse-le-gouvernement-de-manipuler-les-services-de-renseignement-apres" rel="noopener" target="_blank">LCP, 20 octobre 2026</a>).
+      À ce jour, c’est un témoignage, ni confirmé ni infirmé par une enquête, et les comptes rendus disponibles ne nomment pas
+      l’auteur de la consigne.</li>
+  </ul>
+  <p>Cette controverse porte sur l’attribution des violences d’octobre 2026, pas sur le décompte des victimes. Elle suffit
+    pourtant à empêcher d’établir que ces services travaillent à l’abri de toute pression politique, condition que cette page
+    s’est fixée pour les utiliser. Ils pourront être ajoutés, en série distincte et jamais mêlée aux faits de presse, si leur
+    méthode et leurs données sont publiées, ou si une enquête indépendante écarte toute manipulation.</p>
+</div>
+
+<div class="card" id="episodes">
+  <h2>Les épisodes</h2>
+  <p class="lead">La liste suit les réglages ci-dessus. Chaque ligne renvoie à la source lue ; « Corriger » prépare une
+    proposition de correction pour la ligne.</p>
+  <div class="filters">
+    <select id="f-niveau" aria-label="Degré de violence"><option value="">Tous les niveaux</option></select>
+    <select id="f-camp" aria-label="Camp de la victime"><option value="">Tous les camps</option></select>
+    <input type="search" class="search" id="f-q" placeholder="Rechercher (nom, lieu, source…)" aria-label="Rechercher dans les épisodes">
+    <span class="count" id="f-count" role="status"></span>
+  </div>
+  <div class="scroll tbox"><table class="ep" id="t-ep">
+    <thead><tr><th class="l">N°</th><th class="l">Date</th><th class="l">Victime</th><th class="l">Parti</th><th class="l">Niveau</th>
+      <th class="l">Fait</th><th class="l">Plainte</th><th class="l">Fiabilité</th><th class="l">Source</th><th class="l"><span class="sr">Corriger</span></th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+</div>
+
+<div class="card" id="contribuer">
+  <h2>Proposer un fait ou une correction</h2>
+  <p>Cette page s’améliore avec ses lecteurs. <b>Une proposition n’est pas comptée automatiquement</b> : elle est relue et
+    vérifiée à la source, puis ajoutée ou écartée, avec la raison.</p>
+  <p>Ce qui est retenu : un fait daté, visant un élu, un candidat, un collaborateur, un militant ou un local politique en lien avec
+    cet engagement, rapporté par un article de presse ou une décision de justice consultable en ligne. Ce qui ne l’est pas :
+    chiffres ministériels, totaux annoncés par un parti, faits rapportés seulement par une question parlementaire ou un message
+    sur un réseau social.</p>
+  <form id="propose" novalidate>
+    <fieldset>
+      <legend>Vous proposez</legend>
+      <label><input type="radio" name="type" value="nouveau" checked> un fait nouveau</label>
+      <label><input type="radio" name="type" value="correction"> une correction d’un épisode</label>
+      <label><input type="radio" name="type" value="remarque"> une remarque sur la méthode</label>
+    </fieldset>
+    <div class="fgrid">
+      <label class="f" data-for="correction"><span class="req">N° de l’épisode</span><input name="id" inputmode="numeric" autocomplete="off"></label>
+      <label class="f" data-for="nouveau correction"><span class="r-nouveau">Date des faits</span><input name="date" placeholder="AAAA-MM-JJ, ou AAAA-MM" autocomplete="off"></label>
+      <label class="f" data-for="nouveau correction"><span class="r-nouveau">Victime</span><input name="victime" placeholder="Nom et fonction, ou « militants LFI de Lille »" autocomplete="off"></label>
+      <label class="f" data-for="nouveau correction">Parti ou mouvance de la victime<select name="parti"></select></label>
+      <label class="f" data-for="nouveau correction">Nature des faits<select name="niveau"></select></label>
+      <label class="f" data-for="nouveau correction">Plainte<select name="plainte"><option value="">je ne sais pas</option><option>oui</option><option>non</option></select></label>
+      <label class="f wide" data-for="nouveau correction"><span class="r-nouveau">Lien vers la source</span><input name="source" type="url" placeholder="https://…" autocomplete="off"></label>
+      <label class="f wide"><span class="req">Ce qui s’est passé, ou ce qu’il faut corriger</span><textarea name="description" rows="4"></textarea></label>
+      <label class="f wide" data-for="nouveau correction">Autres sources (facultatif, une par ligne)<textarea name="autres" rows="2"></textarea></label>
+      <label class="f">Votre nom ou pseudonyme (facultatif)<input name="auteur" autocomplete="nickname"></label>
+    </div>
+    <p class="hint">N’indiquez aucune information personnelle sur un particulier (adresse, téléphone, employeur). Sur GitHub,
+      la proposition est publique et demande un compte gratuit<span id="mail-hint">. Par e-mail, elle reste privée</span>.</p>
+    <div class="actions">
+      <button type="button" class="btn primary" id="b-gh">Proposer sur GitHub</button>
+      <a class="btn" id="b-mail" hidden>Envoyer par e-mail</a>
+      <button type="button" class="btn" id="b-copy">Copier le texte</button>
+      <span id="f-msg" role="status" aria-live="polite"></span>
+    </div>
+    <details><summary>Voir le texte qui sera envoyé</summary><pre id="f-preview"></pre></details>
+  </form>
+</div>
+
+<details class="card" id="methode">
+  <summary>Méthode et limites</summary>
+  <h3>Ce que mesurent les chiffres</h3>
+  <ul>
+    <li>Ce sont les épisodes que la presse a rendus publics et que les recherches menées pour cette page ont trouvés, pas le nombre
+      réel d’agressions. Les injures et les menaces sont très sous-comptées : elles n’apparaissent que si la victime les rend
+      publiques, ce que certains partis font bien plus que d’autres. Plus le niveau de violence est élevé, plus le recensement est complet.</li>
+    <li id="n-fiab">—</li>
+    <li>Un épisode est un fait daté. Une plainte qui regroupe des milliers de messages compte autant qu’une insulte isolée :
+      les graphiques comptent des épisodes, pas des victimes ni des messages.</li>
+  </ul>
+  <h3>Ce qui est compté</h3>
+  <ul>
+    <li>Période : du 9 juin 2024 (dissolution de l’Assemblée) au 24 novembre 2026, selon la date des faits. Le relevé a été
+      complété le 24 novembre 2026 par un recensement ciblé de la campagne des municipales (septembre 2025 – mars 2026).</li>
+    <li>Victimes : élus, candidats, collaborateurs, militants, locaux et permanences de partis, et militants sans parti
+      (syndicats étudiants, groupes antifascistes ou nationalistes), visés en lien avec leur engagement.</li>
+    <li>Unité : un épisode est un fait daté visant une ou plusieurs victimes d’un même camp. Une attaque contre quatre militants
+      compte une fois ; une plainte qui regroupe des mois de messages aussi.</li>
+    <li>Affiches arrachées ou taguées : exclues, car trop fréquentes et jamais recensées. Listes sans étiquette : non classées,
+      faute de camp identifiable (voir les faits exclus).</li>
+  </ul>
+  <h3>Échelle de gravité</h3>
+  <ul id="m-niveaux"></ul>
+  <h3>Camps</h3>
+  <ul id="m-camps"></ul>
+  <p>Les noms de camps suivent l’usage français courant.</p>
+  <ul>
+    <li><b>Extrême droite</b> : le RN et ses alliés sont classés ainsi de façon constante par le ministère de l’Intérieur.
+      Le RN l’a contesté ; le Conseil d’État a rejeté son recours en 2024, comme celui de l’UDR en 2026.</li>
+    <li><b>Gauche radicale</b> : c’est ainsi que LFI était généralement qualifiée, et le ministère de l’Intérieur la classait
+      à gauche jusqu’en 2024, classement que le Conseil d’État avait aussi jugé légal. Son passage à l’« extrême gauche », aux
+      côtés de Lutte ouvrière et du NPA, par la circulaire du 2 février 2026 est une décision du ministre de l’Intérieur, qui l’a
+      justifiée par le rapport de LFI aux institutions (motions de censure répétées, critiques de la police et de la justice).
+      LFI la conteste. Le Conseil d’État n’y a pas vu d’erreur manifeste, contrôle restreint qui ne dit pas si le classement est
+      juste. La page ne reprend pas ce reclassement, décidé par un ministre partie prenante, pour la même raison qu’elle écarte
+      les chiffres du ministère.</li>
+    <li>Le terme « droite radicale » n’est pas employé : il traduit l’anglais « radical right », une branche de ce que l’anglais
+      appelle « far right », c’est-à-dire l’extrême droite.</li>
+    <li>Les militants sans parti sont comptés à part, pour ne pas les assimiler aux partis ; à droite, il s’agit de l’ultradroite
+      (identitaires, nationalistes, La Cocarde).</li>
+  </ul>
+  <h3>Sources</h3>
+  <ul>
+    <li>Retenues : la presse, y compris engagée et les agrégateurs, signalés dans la colonne Fiabilité.</li>
+    <li>Écartés : les chiffres et déclarations des ministères et de leurs services (Intérieur, renseignement territorial, centre
+      d’analyse des atteintes aux élus), parce que le gouvernement est partie prenante (voir <a href="#officiels">l’encadré</a>) ;
+      les faits rapportés seulement par une question parlementaire, parce que les partis le sont aussi ; les totaux annoncés par un
+      parti sans détail des faits.</li>
+    <li>Pistes : les chiffres et déclarations du ministère, les questions parlementaires et les communiqués de partis servent
+      à orienter les recherches ; seuls les faits retrouvés dans la presse sont comptés.</li>
+    <li>Fait établi : enquête ouverte, interpellation, image, revendication ou plainte enregistrée. Déclaration : fait rapporté
+      sur la seule parole de la victime ou de son camp.</li>
+    <li>Lecture : la plupart des sources n’ont été lues qu’en extrait (moteur de recherche) ; la colonne Fiabilité l’indique.</li>
+  </ul>
+  <h3>Limites</h3>
+  <ul>
+    <li>L’échantillon dépend de ce que la presse couvre et de ce que les moteurs de recherche renvoient. Les mêmes requêtes ont été
+      lancées pour chaque parti (menaces de mort et plainte ; permanence dégradée ; militants ou élus agressés), mais aucun épisode
+      n’a été trouvé pour Reconquête, ce qui ne veut pas dire qu’il n’y en a pas eu.</li>
+    <li>Les auteurs ne sont pas attribués. Le contexte en désigne parfois : les dégradations de permanences de décembre 2024 et de
+      juillet 2025 ont été revendiquées par des syndicats agricoles, ce qui pèse sur le total des Écologistes.</li>
+    <li>Deux décomptes existants recensent chacun les violences d’un seul camp d’auteurs : celui de Libération pour l’extrême droite,
+      celui de l’Observatoire des violences politiques pour l’extrême gauche. Leurs critères diffèrent : ils ne se comparent ni entre
+      eux ni avec cette page.</li>
+  </ul>
+  <h3>Mettre la page à jour</h3>
+  <p>Les données sont dans le bloc <code>donnees</code> à la fin du fichier <code>index.html</code>, un épisode par ligne. Pour
+    ajouter un fait accepté, il suffit d’ajouter une ligne au même format : les chiffres, les graphiques et les tableaux se recalculent.</p>
+</details>
+
+<details class="card" id="non-comptes">
+  <summary>Faits signalés mais non comptés</summary>
+  <p>Rapportés seulement par une question parlementaire, sous forme de total sans détail, ou de façon trop imprécise.</p>
+  <div class="scroll"><table id="t-nc">
+    <thead><tr><th class="l">Date</th><th class="l">Fait</th><th class="l">Camp visé</th><th class="l">Pourquoi non compté</th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+</details>
+
+<details class="card" id="exclus">
+  <summary>Faits exclus</summary>
+  <div class="scroll"><table id="t-ex">
+    <thead><tr><th class="l">Date</th><th class="l">Fait</th><th class="l">Raison</th></tr></thead>
+    <tbody></tbody>
+  </table></div>
+</details>
+
+<footer>
+  Sources : articles de presse cités ligne par ligne dans le tableau des épisodes ; effectifs des groupes parlementaires : datan.fr.
+  Classements officiels : Conseil d’État, décisions <a href="https://www.conseil-etat.fr/fr/arianeweb/CE/decision/2024-03-11/488378" rel="noopener" target="_blank">n°&nbsp;488378 du 11 mars 2024</a>
+  et <a href="https://www.conseil-etat.fr/fr/arianeweb/CE/decision/2026-02-27/512694" rel="noopener" target="_blank">n°&nbsp;512694 du 27 février 2026</a>.
+  Relevé arrêté au 24 novembre 2026. <a href="#contribuer">Proposer un fait ou une correction</a> · <a href="../">Toutes les analyses</a>
+</footer>
+</div>
+
+<div id="ltip" role="tooltip"></div>
+
+<script type="application/json" id="donnees">
+{
+  "episodes": [
+    {"id": "1", "date": "2024-06-15", "victime": "Jean-Jacques Gaultier, député sortant et candidat (Vosges)", "parti": "LR", "camp": "Droite", "niveau": 2, "sous_type": "", "resume": "Courrier anonyme signé « commando RN » lui ordonnant de renoncer à se représenter ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Le Quotidien du médecin", "url": "https://www.lequotidiendumedecin.fr/sante-societe/politique-de-sante/vosges-un-depute-medecin-candidat-aux-legislatives-menace-de-mort-par-un-commando-rn", "groupe_an": ""},
+    {"id": "2", "date": "2024-06-18", "victime": "Militants LFI, Belfort", "parti": "LFI", "camp": "Gauche radicale", "niveau": 1, "sous_type": "", "resume": "Insultes racistes pendant la campagne des législatives.", "nb_victimes": 2, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "titre", "confiance": "faible", "source": "L'Est républicain", "url": "https://www.estrepublicain.fr/faits-divers-justice/2024/06/18/des-militants-lfi-victimes-d-insultes-racistes-pendant-leur-campagne", "groupe_an": ""},
+    {"id": "3", "date": "2024-06", "victime": "Militante NFP âgée, Nanterre", "parti": "Gauche (NFP, parti non précisé)", "camp": "Gauche", "niveau": 2, "sous_type": "", "resume": "Insultée et menacée par des militants RN selon la députée Sabrina Sebaihi ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "agrégateur", "lecture": "extrait", "confiance": "faible", "source": "Wikipédia, Élections législatives de 2024", "url": "https://fr.wikipedia.org/wiki/%C3%89lections_l%C3%A9gislatives_de_2024_en_France", "groupe_an": ""},
+    {"id": "4", "date": "2024-06", "victime": "Hervé Breuil, candidat (Loire)", "parti": "RN", "camp": "Extrême droite", "niveau": 4, "sous_type": "", "resume": "Bousculade, insultes, eau et farine sur un marché ; enquête du parquet de Saint-Étienne pour « violence en réunion ».", "nb_victimes": 1, "plainte": "inconnu", "suite": "enquête", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Arab News (AFP)", "url": "https://www.arabnews.fr/france/legislatives-la-campagne-tres-polarisee-attise-les-violences-493841", "groupe_an": ""},
+    {"id": "5", "date": "2024-06", "victime": "Militant NFP tractant, Bordeaux", "parti": "Gauche (NFP, parti non précisé)", "camp": "Gauche", "niveau": 5, "sous_type": "", "resume": "Frappé par un homme se disant supporter de Jordan Bardella ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Arab News (AFP)", "url": "https://www.arabnews.fr/france/legislatives-la-campagne-tres-polarisee-attise-les-violences-493841", "groupe_an": ""},
+    {"id": "6", "date": "2024-07-02", "victime": "Quatre militants de gauche collant des affiches, Paris", "parti": "Gauche (NFP, parti non précisé)", "camp": "Gauche", "niveau": 5, "sous_type": "", "resume": "Insultés, agressés et blessés par six hommes armés.", "nb_victimes": 4, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "agrégateur", "lecture": "extrait", "confiance": "moyenne", "source": "Wikipédia (législatives 2024) ; Politis", "url": "https://www.politis.fr/articles/2024/07/elections-legislatives-le-rn-et-les-violences-une-longue-histoire-de-haine/", "groupe_an": ""},
+    {"id": "7", "date": "2024-07-03", "victime": "Prisca Thévenot et son équipe, Meudon", "parti": "Renaissance", "camp": "Centre", "niveau": 5, "sous_type": "", "resume": "Agressés en collant des affiches ; suppléante et un militant blessés ; quatre interpellés dont trois mineurs.", "nb_victimes": 3, "plainte": "inconnu", "suite": "interpellations", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Public Sénat", "url": "https://www.publicsenat.fr/actualites/politique/elections-legislatives-une-campagne-electorale-sous-haute-tension-emaillee-de-violences", "groupe_an": ""},
+    {"id": "8", "date": "2024-07-03", "victime": "Marie Dauchy, candidate (Savoie)", "parti": "RN", "camp": "Extrême droite", "niveau": 4, "sous_type": "", "resume": "Dit avoir été « violemment agressée » par un commerçant sur un marché ; nature des faits non précisée dans l'extrait.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Boursorama (Reuters)", "url": "https://www.boursorama.com/actualite-economique/actualites/en-direct-france-legislatives-vives-tensions-dans-la-campagne-a-trois-jours-du-second-tour-4a27b3eef232431fb79ab565b7940316", "groupe_an": ""},
+    {"id": "9", "date": "2024-07-04", "victime": "Directrice de cabinet de Sébastien Ramage, candidat NFP (Val-d'Oise)", "parti": "Gauche (NFP, parti non précisé)", "camp": "Gauche", "niveau": 5, "sous_type": "", "resume": "Agressée « par un sympathisant RN » qui, selon le candidat, lui a « asséné » un coup après avoir crié « Vive Bardella » ; extrait tronqué, nature du coup non précisée.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "franceinfo", "url": "https://www.franceinfo.fr/elections/legislatives/legislatives-2024-agressions-insultes-racistes-menaces-de-mort-un-entre-deux-tours-emaille-de-violences-et-de-tensions_6647193.html", "groupe_an": ""},
+    {"id": "10", "date": "2024-10-20", "victime": "Alexandre Allegret-Pilot, député (Gard)", "parti": "UDR", "camp": "Extrême droite", "niveau": 4, "sous_type": "", "resume": "Enfariné à la foire du Vigan ; dit avoir été pris à partie par une quarantaine de militants d'extrême gauche ; exfiltré par les gendarmes.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Objectif Gard", "url": "https://www.objectifgard.com/actualites/video-les-images-du-depute-allegret-pilot-enfarine-au-vigan-136575.php", "groupe_an": "UDR"},
+    {"id": "11", "date": "2024-11-14", "victime": "Thomas Portes, député", "parti": "LFI", "camp": "Gauche radicale", "niveau": 2, "sous_type": "", "resume": "Lettre lui promettant « une balle dans la tête » et menaçant sa famille ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "agrégateur", "lecture": "extrait", "confiance": "moyenne", "source": "jeanmarcmorandini.com", "url": "https://www.jeanmarcmorandini.com/node/589835", "groupe_an": "LFI-NFP"},
+    {"id": "12", "date": "2024-12-05", "victime": "Permanences des députés LFI de Haute-Vienne", "parti": "LFI", "camp": "Gauche radicale", "niveau": 3, "sous_type": "", "resume": "Murées par des agriculteurs de la FDSEA après la censure du gouvernement Barnier.", "nb_victimes": 2, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Europe 1", "url": "https://www.europe1.fr/societe/chute-du-gouvernement-barnier-des-agriculteurs-visent-des-permanences-de-deputes-234210", "groupe_an": "LFI-NFP"},
+    {"id": "13", "date": "2024-12-05", "victime": "Permanence de Fabrice Barusseau, député (Saintes)", "parti": "PS", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Vandalisée par des agriculteurs (déversements) après la censure.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Europe 1", "url": "https://www.europe1.fr/societe/chute-du-gouvernement-barnier-des-agriculteurs-visent-des-permanences-de-deputes-234210", "groupe_an": "SOC"},
+    {"id": "14", "date": "2024-12-05", "victime": "Permanence de Benoît Biteau, député (Rochefort)", "parti": "Écologistes", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Vandalisée par des agriculteurs (déversements) après la censure.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Europe 1", "url": "https://www.europe1.fr/societe/chute-du-gouvernement-barnier-des-agriculteurs-visent-des-permanences-de-deputes-234210", "groupe_an": "EcoS"},
+    {"id": "15", "date": "2024-12-05", "victime": "Permanence de Pascal Markowsky, député (Royan)", "parti": "RN", "camp": "Extrême droite", "niveau": 3, "sous_type": "", "resume": "Vandalisée par des agriculteurs (déversements) après la censure.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Europe 1", "url": "https://www.europe1.fr/societe/chute-du-gouvernement-barnier-des-agriculteurs-visent-des-permanences-de-deputes-234210", "groupe_an": "RN"},
+    {"id": "16", "date": "2024-12-08", "victime": "Permanences de deux députées NFP de la Sarthe", "parti": "Gauche (NFP, parti non précisé)", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Produits agricoles déversés devant les permanences.", "nb_victimes": 2, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Terre-net", "url": "https://www.terre-net.fr/manifestations/article/875800/des-agriculteurs-visent-deux-permanences-nfp-dans-la-sarthe", "groupe_an": ""},
+    {"id": "17", "date": "2024-12", "victime": "Permanence de François Hollande, député (Corrèze)", "parti": "PS", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Visée par des agriculteurs après la censure.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Terre-net", "url": "https://www.terre-net.fr/manifestations/article/875937/la-mobilisation-des-agriculteurs-flechit-sur-le-terrain", "groupe_an": "SOC"},
+    {"id": "18", "date": "2025-01-08", "victime": "Permanence d'Antoine Golliot, député (Pas-de-Calais)", "parti": "RN", "camp": "Extrême droite", "niveau": 3, "sous_type": "", "resume": "Tags dont « JMLP mort, tuons le RN » au lendemain de la mort de Jean-Marie Le Pen ; dégradée « une nouvelle fois » selon le député.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Europe 1", "url": "https://www.europe1.fr/node/238444", "groupe_an": "RN"},
+    {"id": "19", "date": "2025-01-13", "victime": "Étudiant de La Cocarde, Montpellier", "parti": "Hors parti (droite)", "camp": "Hors parti, droite", "niveau": 5, "sous_type": "", "resume": "Roué de coups pour avoir retiré un autocollant ; 7 jours d'ITT et plainte selon une question écrite d'un député RN.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "presse engagée", "lecture": "extrait", "confiance": "faible", "source": "Breizh-Info", "url": "https://www.breizh-info.com/2025/02/04/243443/la-jeune-garde-antifa-six-ans-de-violences-politiques-impunies/", "groupe_an": ""},
+    {"id": "20", "date": "2025-04-05", "victime": "Sébastien Peytavie, député (Dordogne)", "parti": "Écologistes", "camp": "Gauche", "niveau": 2, "sous_type": "", "resume": "Blogueur d'extrême droite appelant à en faire « l'heureux participant de la prochaine Aktion T4 » ; plainte retenue pour menace de mort par le parquet de Bergerac.", "nb_victimes": 1, "plainte": "oui", "suite": "enquête", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/actualites/sebastien-peytavie-menace-de-mort-par-un-blogueur-cet-homme-doit-imperativement-repondre", "groupe_an": "EcoS"},
+    {"id": "21", "date": "2025-05", "victime": "Hanane Mansouri, députée (Isère)", "parti": "UDR", "camp": "Extrême droite", "niveau": 2, "sous_type": "", "resume": "Lettre manuscrite d'insultes racistes et de menaces de mort reçue à l'Assemblée ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "TelQuel", "url": "https://telquel.ma/2025/05/16/fais-attention-aux-algeriens-la-deputee-franco-marocaine-hanane-mansouri-menacee-de-mort-dans-une-lettre_1933181", "groupe_an": "UDR"},
+    {"id": "22", "date": "2025-05-30", "victime": "Bar Le Prolé, Alès (« bastion communiste »), militants et clients", "parti": "PCF", "camp": "Gauche", "niveau": 5, "sous_type": "", "resume": "Attaque d'une dizaine de membres du Bloc montpelliérain ; une vingtaine de blessés selon les témoins ; pas d'interpellation mentionnée.", "nb_victimes": 20, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "article", "confiance": "moyenne", "source": "Objectif Sud", "url": "https://www.objectifsud.fr/gard/ales-cevennes/ales-au-prole-une-agression-decidee-voulue-et-preparee-par-le-groupe-bloc-montpellierain-148097.php", "groupe_an": ""},
+    {"id": "23", "date": "2025-06", "victime": "Deux militants LFI collant des affiches, Pusignan", "parti": "LFI", "camp": "Gauche radicale", "niveau": 4, "sous_type": "", "resume": "Agressés physiquement par deux individus se revendiquant d'extrême droite, selon LFI Rhône.", "nb_victimes": 2, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "LyonMag", "url": "https://www.lyonmag.com/article/144656/deux-militants-lfi-agresses-pres-de-lyon-ne-repassez-jamais-ici-la-france-insoumise-on-la-baise", "groupe_an": ""},
+    {"id": "24", "date": "2025-07-18", "victime": "Delphine Lingemann, députée (Puy-de-Dôme)", "parti": "MoDem", "camp": "Centre", "niveau": 2, "sous_type": "", "resume": "Photos et message « le vivant les jugera » placardés sur sa permanence, revendiqués par Extinction Rebellion ; plainte contre X.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "article", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": "Dem"},
+    {"id": "25", "date": "2025-07-23", "victime": "Permanence de Nicolas Thierry, député (Bordeaux)", "parti": "Écologistes", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Tags et jets d'œufs revendiqués par la Coordination rurale ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "enquête", "fondement": "constat", "type_source": "presse", "lecture": "article", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": "EcoS"},
+    {"id": "26", "date": "2025-07-23", "victime": "Permanence de Mathilde Feld, députée (Cadillac)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 3, "sous_type": "", "resume": "Tags et jets d'œufs revendiqués par la Coordination rurale.", "nb_victimes": 1, "plainte": "inconnu", "suite": "enquête", "fondement": "constat", "type_source": "presse", "lecture": "article", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": "LFI-NFP"},
+    {"id": "27", "date": "2025-07", "victime": "Permanence de Delphine Batho, députée (Deux-Sèvres)", "parti": "Écologistes", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Dégradée pendant la contestation de la loi Duplomb (revendication : Coordination rurale ou Jeunes agriculteurs).", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "article", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": "EcoS"},
+    {"id": "28", "date": "2025-07", "victime": "Permanence de Jean-Louis Roumégas, député (Hérault)", "parti": "Écologistes", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Dégradée pendant la contestation de la loi Duplomb (revendication : Coordination rurale ou Jeunes agriculteurs).", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "article", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": "EcoS"},
+    {"id": "29", "date": "2025-07", "victime": "Permanence de Jean-Marie Fiévet, député (Bressuire)", "parti": "Renaissance", "camp": "Centre", "niveau": 3, "sous_type": "", "resume": "Inscriptions peintes dans la rue devant la permanence, attribuées aux Jeunes agriculteurs.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "article", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": "EPR"},
+    {"id": "30", "date": "2025-07", "victime": "Local du parti Les Écologistes, Toulouse", "parti": "Écologistes", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Tags visant les propos de Sandrine Rousseau sur les agriculteurs.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "article", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": ""},
+    {"id": "31", "date": "2025-07", "victime": "Local du parti Les Écologistes, Limoges", "parti": "Écologistes", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Tags visant les propos de Sandrine Rousseau sur les agriculteurs.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "article", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": ""},
+    {"id": "32", "date": "2025-07", "victime": "Local du parti Les Écologistes, Blois", "parti": "Écologistes", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Tags visant les propos de Sandrine Rousseau sur les agriculteurs.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "article", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": ""},
+    {"id": "33", "date": "2025-07", "victime": "Aurélien Pradié, député (Lot), non-inscrit ex-LR", "parti": "LR", "camp": "Droite", "niveau": 2, "sous_type": "", "resume": "Dit avoir reçu des milliers d'insultes et des menaces de mort après la loi Duplomb ; pas de plainte.", "nb_victimes": 1, "plainte": "non", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Europe 1", "url": "https://www.europe1.fr/node/764854", "groupe_an": ""},
+    {"id": "34", "date": "2025-07", "victime": "Guillaume Lepers, député (Lot-et-Garonne)", "parti": "LR", "camp": "Droite", "niveau": 1, "sous_type": "", "resume": "« Des centaines » de mails d'insultes après la loi Duplomb.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "article", "confiance": "moyenne", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": "DR"},
+    {"id": "35", "date": "2025-07", "victime": "Loïc Kervran, député (Cher)", "parti": "Horizons", "camp": "Centre", "niveau": 1, "sous_type": "", "resume": "Messages lui souhaitant d'avoir un cancer.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "article", "confiance": "moyenne", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": "HOR"},
+    {"id": "36", "date": "2025-07", "victime": "Liliana Tanguy, députée (Finistère)", "parti": "Renaissance", "camp": "Centre", "niveau": 1, "sous_type": "", "resume": "Courriers et messages hostiles sur les réseaux sociaux.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "article", "confiance": "moyenne", "source": "LCP", "url": "https://lcp.fr/index.php/actualites/loi-duplomb-ces-deputes-qui-ont-vu-leur-permanence-parlementaire-degradee-391115", "groupe_an": "EPR"},
+    {"id": "37", "date": "2025-07", "victime": "Laurent Duplomb, sénateur (Haute-Loire)", "parti": "LR", "camp": "Droite", "niveau": 2, "sous_type": "", "resume": "Menaces de mort depuis l'été 2025, selon le sénateur LR Olivier Paccaud.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "faible", "source": "Public Sénat", "url": "https://www.publicsenat.fr/actualites/politique/loi-duplomb-on-voudrait-le-faire-bruler-en-place-publique-comme-les-sorcieres-au-xviᵉ-siecle-reagit-le-senateur-lr-olivier-paccaud", "groupe_an": ""},
+    {"id": "38", "date": "2025", "victime": "Émilie Bonnivard et ses collaboratrices, députée (Savoie)", "parti": "LR", "camp": "Droite", "niveau": 2, "sous_type": "", "resume": "Menaces de viol et de mort ; plainte ; le prévenu a été relaxé selon la députée (octobre 2026).", "nb_victimes": 3, "plainte": "oui", "suite": "relaxe", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "LCP", "url": "https://lcp.fr/actualites/c-est-d-une-violence-incroyable-a-l-assemblee-emilie-bonnivard-denonce-la-relaxe-d-un", "groupe_an": "DR"},
+    {"id": "39", "date": "2025-11-25", "victime": "Jordan Bardella, Vesoul", "parti": "RN", "camp": "Extrême droite", "niveau": 4, "sous_type": "", "resume": "Enfariné par un lycéen de 17 ans ; garde à vue puis stage de citoyenneté ; plaintes du RN.", "nb_victimes": 1, "plainte": "oui", "suite": "mesure alternative (stage de citoyenneté)", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Paris Match Belgique ; ma commune.info (AFP)", "url": "https://www.parismatch.be/actualites/monde/2025/11/30/apres-avoir-ete-enfarine-a-vesoul-jordan-bardella-agresse-lors-dune-seance-de-dedicace-a-moissac-URDUSURTSFECNBJ6UVJMOWWD7U/", "groupe_an": ""},
+    {"id": "40", "date": "2025-11-29", "victime": "Jordan Bardella, Moissac", "parti": "RN", "camp": "Extrême droite", "niveau": 4, "sous_type": "", "resume": "Œuf lancé lors d'une dédicace par un agriculteur retraité déjà condamné pour un acte similaire contre Éric Zemmour ; garde à vue ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "garde à vue", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "PhilSTAR Life (AFP)", "url": "https://philstarlife.com/news-and-views/412203-france-far-right-leader-hit-by-egg-days-after-flour-attack", "groupe_an": ""},
+    {"id": "41", "date": "2025-12-10", "victime": "Permanence de Benoît Biteau, député (Charente-Maritime)", "parti": "Écologistes", "camp": "Gauche", "niveau": 3, "sous_type": "", "resume": "Action de la Coordination rurale : banderoles, pneus, ballots surmontés d'une tête de sanglier (même nuit que l'OFB).", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Terre-net ; Reporterre", "url": "https://www.terre-net.fr/coordination-rurale/article/891451/la-coordination-rurale-vise-l-ofb-un-depute-vert-et-deux-associations", "groupe_an": "EcoS"},
+    {"id": "42", "date": "2026-02-12", "victime": "Quentin Deranque, militant nationaliste, Lyon", "parti": "Hors parti (droite)", "camp": "Hors parti, droite", "niveau": 6, "sous_type": "mort", "resume": "Battu à mort par des militants d'ultragauche ; neuf mis en examen, dont huit pour homicide volontaire.", "nb_victimes": 1, "plainte": "sans objet", "suite": "mises en examen", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Lyon Capitale ; La Gazette France (AFP)", "url": "https://www.lyoncapitale.fr/?p=512519", "groupe_an": ""},
+    {"id": "43", "date": "2026-02-14", "victime": "Permanence d'Aurélien Le Coq, député (Lille)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 3, "sous_type": "", "resume": "Peinture rouge ; action revendiquée par des collectifs d'extrême droite.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "agrégateur", "lecture": "extrait", "confiance": "moyenne", "source": "Ground News", "url": "https://ground.news/article/lfi-lille-mps-local-degraded-by-false-blood-extreme-right-wing-collectives-claim-action", "groupe_an": "LFI-NFP"},
+    {"id": "44", "date": "2026-02-17", "victime": "Local de campagne de Florian Chauche, député et candidat (Belfort)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 3, "sous_type": "", "resume": "Vandalisé par des individus cagoulés ; inscription « Justice pour Quentin ».", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "ma commune.info", "url": "https://www.macommune.info/754172-2/", "groupe_an": "LFI-NFP"},
+    {"id": "45", "date": "2026-02-18", "victime": "Siège national de LFI, Paris", "parti": "LFI", "camp": "Gauche radicale", "niveau": 2, "sous_type": "", "resume": "Évacué après une alerte à la bombe.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Euronews", "url": "https://fr.euronews.com/2026/02/18/le-siege-de-lfi-a-paris-brievement-evacue-suite-a-une-menace-a-la-bombe", "groupe_an": ""},
+    {"id": "46", "date": "2026-02/03", "victime": "Quatre militants de Cœur lyonnais (liste J.-M. Aulas), Lyon", "parti": "Centre (divers)", "camp": "Centre", "niveau": 4, "sous_type": "", "resume": "Agressés par un individu se revendiquant de la Jeune Garde ; une colistière de 70 ans agressée physiquement ; plainte.", "nb_victimes": 4, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "LyonMag", "url": "https://www.lyonmag.com/article/150936/des-militants-tractant-pour-jean-michel-aulas-agresses-a-lyon-une-action-de-la-jeune-garde", "groupe_an": ""},
+    {"id": "47", "date": "2026-02", "victime": "Militant de l'Union étudiante, Aix-en-Provence", "parti": "Hors parti (gauche)", "camp": "Hors parti, gauche", "niveau": 5, "sous_type": "", "resume": "Agressé par des membres de La Cocarde après avoir refusé un tract, selon l'Union étudiante.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "agrégateur", "lecture": "extrait", "confiance": "faible", "source": "Senego (d'après Anadolu)", "url": "https://senego.com/refuser-un-simple-tract-electoral-en-france-la-consequence-physique-immediate-rapportee-par-un-syndicat-a-aix-en-provence_1923550.html", "groupe_an": ""},
+    {"id": "48", "date": "2026-03", "victime": "Nazim Bekhti, candidat de gauche (Mantes-la-Ville)", "parti": "Gauche (autre)", "camp": "Gauche", "niveau": 4, "sous_type": "", "resume": "Agressé ; plainte ; campagne de terrain suspendue. Nature des faits non précisée dans l'extrait.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Infos Yvelines", "url": "https://www.infosyvelines.fr/articles/mantes-la-ville-campagne-municipale-sous-tension-le-candidat-de-gauche-a-suspendu-sa-candidature", "groupe_an": ""},
+    {"id": "49", "date": "2026-03-20", "victime": "Colleurs d'affiches de Vincent Bouget (Nîmes en commun), Nîmes", "parti": "PCF", "camp": "Gauche", "niveau": 5, "sous_type": "", "resume": "Bagarre entre colleurs ; un homme mis à terre et frappé ; deux blessés, deux plaintes ; auteurs présumés « proches » de la liste de droite ; versions contradictoires.", "nb_victimes": 2, "plainte": "oui", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Objectif Gard", "url": "https://www.objectifgard.com/faits-divers/nimes-agression-de-colleurs-daffiches-des-blesses-et-deux-plaintes-161524.php", "groupe_an": ""},
+    {"id": "50", "date": "2026-03-06", "victime": "Jamila Haddoum, candidate (Strasbourg)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 2, "sous_type": "", "resume": "Menacée de mort par un homme armé d'un couteau pendant un collage d'affiches, devant ses enfants ; plainte ; un suspect placé en garde à vue (parquet de Strasbourg).", "nb_victimes": 1, "plainte": "oui", "suite": "garde à vue", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "franceinfo", "url": "https://www.franceinfo.fr/elections/municipales-2026-a-strasbourg-la-maire-ecologiste-en-danger-une-elue-socialiste-de-retour-tout-comprendre-des-enjeux-du-scrutin_7828721.html", "groupe_an": ""},
+    {"id": "51", "date": "2026-03", "victime": "Pascal Lesellier, candidat (Bayonne)", "parti": "RN", "camp": "Extrême droite", "niveau": 4, "sous_type": "", "resume": "Enfariné et pris à partie par un groupe d'antifascistes pendant un tractage au marché ; membre du RN, tête d'une liste sans étiquette.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Europe 1", "url": "https://www.europe1.fr/police-justice/info-europe-1-les-atteintes-visant-les-personnalites-politiques-ont-plus-que-double-durant-la-periode-pre-electorale-de-2026-par-rapport-aux-municipales-de-2020-939176", "groupe_an": ""},
+    {"id": "52", "date": "2026-04-07", "victime": "Groupe LFI à l'Assemblée (Mathilde Panot)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 2, "sous_type": "", "resume": "Lettre accompagnée d'une balle de fusil ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "agrégateur", "lecture": "extrait", "confiance": "faible", "source": "Le Tribunal du Net", "url": "https://www.letribunaldunet.fr/politique/lfi-menaces-mort-balle-fusil-assemblee-nationale.html", "groupe_an": "LFI-NFP"},
+    {"id": "53", "date": "2026-05", "victime": "Jordan Bardella", "parti": "RN", "camp": "Extrême droite", "niveau": 2, "sous_type": "", "resume": "Clip de rap mettant en scène son passage à tabac ; plainte pour « menaces de mort explicites ».", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Europe 1", "url": "https://www.europe1.fr/police-justice/des-menaces-de-mort-explicites-un-rappeur-met-en-scene-le-passage-a-tabac-de-jordan-bardella-le-president-du-rn-porte-plainte-939170", "groupe_an": ""},
+    {"id": "54", "date": "2026-06-05", "victime": "Militants Renaissance, La Flèche", "parti": "Renaissance", "camp": "Centre", "niveau": 1, "sous_type": "", "resume": "Insultés et « chahutés » pendant un collage selon la députée Julie Delpech ; le RN local dément toute implication.", "nb_victimes": 2, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "info.fr", "url": "https://info.fr/la-fleche-delpech-denonce-agression-militants-renaissance-rn-dement/", "groupe_an": ""},
+    {"id": "55", "date": "2026-07-14", "victime": "Militants LFI, bal des pompiers de Lyon", "parti": "LFI", "camp": "Gauche radicale", "niveau": 4, "sous_type": "", "resume": "LFI dit ses militants agressés ; l'élu mis en cause annonce une plainte en diffamation.", "nb_victimes": 2, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "faible", "source": "LyonMag", "url": "https://www.lyonmag.com/article/153066/lyon-lfi-denonce-des-violences-au-bal-des-pompiers-l-elu-coeur-lyonnais-mis-en-cause-annonce-une-plainte-en-diffamation", "groupe_an": ""},
+    {"id": "56", "date": "2026-08-09", "victime": "Philippe G., militant LFI de 68 ans, Yonne", "parti": "LFI", "camp": "Gauche radicale", "niveau": 5, "sous_type": "", "resume": "Plaqué au sol, saignant à la tempe ; les agresseurs présumés n'ont pas été placés en garde à vue.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse engagée", "lecture": "extrait", "confiance": "moyenne", "source": "Politis", "url": "https://www.politis.fr/articles/2026/11/agression-dun-militant-insoumis-dans-lyonne-le-spectre-de-la-peste-brune-qui-envahit-les-campagnes/", "groupe_an": ""},
+    {"id": "57", "date": "2026-10-08", "victime": "Rima Hassan, eurodéputée", "parti": "LFI", "camp": "Gauche radicale", "niveau": 2, "sous_type": "", "resume": "Plainte contre X pour menace de mort et provocation à l'atteinte à la vie.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Le Club des juristes", "url": "https://www.leclubdesjuristes.com/en-bref/rima-hassan-porte-plainte-pour-menaces-de-mort-et-provocation-directe-a-latteinte-a-la-vie-ou-a-lintegrite-de-la-personne-17727/", "groupe_an": ""},
+    {"id": "58", "date": "2026-10-13", "victime": "Étudiant manifestant, université d'Assas (Paris)", "parti": "Hors parti (gauche)", "camp": "Hors parti, gauche", "niveau": 5, "sous_type": "", "resume": "Coup de poing d'un jeune de La Cocarde pendant le blocus (photo légendée).", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "L'Étudiant", "url": "https://www.letudiant.fr/lifestyle/j-ai-une-trace-de-semelle-sur-le-front-dans-certaines-facs-des-manifestants-agresses-par-l-extreme-droite.html", "groupe_an": ""},
+    {"id": "59", "date": "2026-10-23", "victime": "Sandrine Rousseau, députée (Paris)", "parti": "Écologistes", "camp": "Gauche", "niveau": 6, "sous_type": "cible nommée", "resume": "Nom et numéro sur une liste « ennemis de la France » trouvée chez l'auteur de l'attentat raciste de Trappes.", "nb_victimes": 1, "plainte": "inconnu", "suite": "enquête antiterroriste", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/actualites/liste-par-le-terroriste-de-trappes-aymeric-caron-accuse-laurent-nunez-de-laisser-pourrir", "groupe_an": "EcoS"},
+    {"id": "60", "date": "2026-10-23", "victime": "Aymeric Caron, député, et David Guiraud, maire de Roubaix", "parti": "LFI", "camp": "Gauche radicale", "niveau": 6, "sous_type": "cible nommée", "resume": "Noms et numéros sur la même liste trouvée chez l'auteur de l'attentat de Trappes.", "nb_victimes": 2, "plainte": "inconnu", "suite": "enquête antiterroriste", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/actualites/liste-par-le-terroriste-de-trappes-aymeric-caron-accuse-laurent-nunez-de-laisser-pourrir", "groupe_an": "LFI-NFP"},
+    {"id": "61", "date": "2026-10-25", "victime": "Car de sympathisants RN (11 passagers, 2 chauffeurs), Grenoble", "parti": "RN", "camp": "Extrême droite", "niveau": 4, "sous_type": "", "resume": "Vitres brisées à la barre de fer par une dizaine d'individus cagoulés ; enquête pour violences volontaires aggravées ; aucun blessé rapporté.", "nb_victimes": 13, "plainte": "inconnu", "suite": "enquête", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "DH (AFP)", "url": "https://www.dhnet.be/dernieres-depeches/2026/10/25/grenoble-un-bus-de-sympathisants-rn-degrade-par-des-militants-cagoules-YUXB3ZRPXVHNBIZJPA5DZSOMSM/", "groupe_an": ""},
+    {"id": "62", "date": "2026-11-17", "victime": "Sébastien Delogu, député (Marseille)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 2, "sous_type": "", "resume": "Plainte contre X : environ 4 000 menaces recensées sur 2025-2026, dont une lettre accompagnée d'une munition.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "La Gazette France (AFP)", "url": "https://www.lagazettefrance.fr/article/le-depute-insoumis-sebastien-delogu-annonce-une-serie-de-plaintes-pour-menaces", "groupe_an": "LFI-NFP"},
+    {"id": "63", "date": "2026-11-23", "victime": "Six députés LFI (Coquerel, Léaument, Legrain, Mesmeur, Portes, Martens Bilongo)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 2, "sous_type": "", "resume": "Lettres manuscrites à croix gammées ou mentionnant le GUD, d'un même expéditeur ; plainte commune.", "nb_victimes": 6, "plainte": "oui", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "franceinfo", "url": "https://www.franceinfo.fr/societe/justice/six-deputes-de-la-france-insoumise-vont-porter-plainte-pour-des-menaces-de-mort-anonymes_8296824.html", "groupe_an": "LFI-NFP"},
+    {"id": "64", "date": "2025", "victime": "Permanence de David Magnier, député (Oise)", "parti": "RN", "camp": "Extrême droite", "niveau": 3, "sous_type": "", "resume": "Vitrines brisées dans la nuit (date non précisée, sous le ministère Retailleau).", "nb_victimes": 1, "plainte": "inconnu", "suite": "enquête", "fondement": "constat", "type_source": "agrégateur", "lecture": "extrait", "confiance": "faible", "source": "viralmag.fr", "url": "https://viralmag.fr/?p=30202", "groupe_an": "RN"},
+    {"id": "65", "date": "2025-12-18", "victime": "Militant RN de 77 ans, tractage Porte de Pantin (Paris 19e)", "parti": "RN", "camp": "Extrême droite", "niveau": 5, "sous_type": "", "resume": "Frappé à la tête pendant un tractage pour les municipales ; hospitalisé ensuite à la suite de complications.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse engagée", "lecture": "extrait", "confiance": "faible", "source": "Observatoire des violences politiques", "url": "https://www.observatoire-violences.fr/articles/paris-jean-pierre-militant-rn-de-77-ans-agresse-par-un-militant-dextreme-gauche-en-decembre-hospitalise", "groupe_an": ""},
+    {"id": "66", "date": "2026-01", "victime": "Pierre François, conseiller régional et candidat (Épinal)", "parti": "RN", "camp": "Extrême droite", "niveau": 2, "sous_type": "", "resume": "Menaces attribuées à des militants antifascistes.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Europe 1", "url": "https://www.europe1.fr/police-justice/info-europe-1-les-atteintes-visant-les-personnalites-politiques-ont-plus-que-double-durant-la-periode-pre-electorale-de-2026-par-rapport-aux-municipales-de-2020-939176", "groupe_an": ""},
+    {"id": "67", "date": "2026-02-15", "victime": "Permanence de campagne de Louis Sarkozy, candidat (Menton)", "parti": "LR", "camp": "Droite", "niveau": 3, "sous_type": "", "resume": "Façade couverte d'inscriptions hostiles ; plainte annoncée. Liste soutenue par LR, Renaissance et Horizons.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "agrégateur", "lecture": "extrait", "confiance": "faible", "source": "People au quotidien (d'après BFMTV)", "url": "https://peopleauquotidien.com/celebrites/la-permanence-de-campagne-de-louis-sarkozy-vandalisee-a-menton/", "groupe_an": ""},
+    {"id": "68", "date": "2026-02-18", "victime": "Anaïs Belouassa-Cherifi, députée et candidate (Lyon)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 2, "sous_type": "", "resume": "Dit être la cible de menaces de mort et de viol constantes et d'insultes racistes et sexistes ; annonce porter plainte pour chaque menace.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "LyonMag", "url": "https://www.lyonmag.com/article/150266/lynchage-de-quentin-je-suis-la-cible-de-menaces-de-mort-et-de-viol-constantes-d-insultes-racistes-et-sexistes-denonce-anais-belouassa-cherifi-lfi", "groupe_an": "LFI-NFP"},
+    {"id": "69", "date": "2026-03-04", "victime": "Militant RN colleur d'affiches de Lucas Langrenez (Sedan)", "parti": "RN", "camp": "Extrême droite", "niveau": 4, "sous_type": "", "resume": "Aspergé de gaz lacrymogène et de peinture noire par un couple surpris en train de taguer les affiches du candidat RN ; couple reconnu coupable de violence aggravée en réunion le 21 octobre 2026.", "nb_victimes": 1, "plainte": "inconnu", "suite": "condamnation", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "France 3 Grand Est", "url": "https://france3-regions.franceinfo.fr/grand-est/ardennes/sedan-0/un-couple-condamne-pour-avoir-agresse-un-militant-rn-pendant-la-campagne-des-municipales-2026-dans-les-ardennes-3436815.html", "groupe_an": ""},
+    {"id": "70", "date": "2026-03-06", "victime": "Militant LFI, Toulon", "parti": "LFI", "camp": "Gauche radicale", "niveau": 3, "sous_type": "", "resume": "Domicile attaqué de nuit par des militants d'extrême droite, pour la troisième fois en trois mois (nature exacte non précisée dans l'extrait) ; plainte ; protection policière.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "constat", "type_source": "presse engagée", "lecture": "extrait", "confiance": "moyenne", "source": "StreetPress", "url": "https://www.streetpress.com/1773755871-toulon-militants-lfi-attaques-domicile-marge-campagne-municipales-rassemblement-national/", "groupe_an": ""},
+    {"id": "71", "date": "2026-03", "victime": "Militante LFI, Toulon", "parti": "LFI", "camp": "Gauche radicale", "niveau": 3, "sous_type": "", "resume": "Dégradations à son domicile début mars, selon StreetPress ; France 3 rapporte qu'un voisin l'avait abordée pour lui demander si elle faisait « partie de LFI » ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "France 3 Provence-Alpes", "url": "https://france3-regions.franceinfo.fr/provence-alpes-cote-d-azur/var/toulon/plusieurs-militants-lfi-attaque-a-toulon-en-marge-des-municipales-l-ambiance-est-suffocante-3319563.html", "groupe_an": ""},
+    {"id": "72", "date": "2026-03", "victime": "Colistier de la liste de gauche et écologiste de Lise Florès (Lunel)", "parti": "Gauche (autre)", "camp": "Gauche", "niveau": 5, "sous_type": "", "resume": "Injures racistes « d'une extrême gravité » puis coups, un dimanche de campagne, selon la tête de liste.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "article", "confiance": "moyenne", "source": "Objectif Gard", "url": "https://www.objectifsud.fr/actualites/municipales-quand-lagressivite-prend-le-dessus-sur-la-campagne-160622.php", "groupe_an": ""},
+    {"id": "73", "date": "2026-03-13", "victime": "Local de campagne du Nice Front populaire, liste de Mireille Damiano (Nice)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 3, "sous_type": "", "resume": "Façade couverte de tags « LFI tue », « Fuck LFI » à deux jours du premier tour.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "ICI Azur", "url": "https://www.ici.fr/provence-alpes-cote-d-azur/alpes-maritimes-06/nice/lfi-tue-fuck-lfi-la-permanence-du-nice-front-populaire-vandalisee-a-deux-jours-du-scrutin-des-municipales-2026-3905918", "groupe_an": ""},
+    {"id": "74", "date": "2026-03-15", "victime": "Nadia Monsallier, colistière RN et déléguée de bureau de vote (Alençon)", "parti": "RN", "camp": "Extrême droite", "niveau": 4, "sous_type": "", "resume": "« Agression » au bureau de vote par une candidate de la liste Gauche unie, selon le RN, qui porte plainte ; la liste mise en cause conteste.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Ouest-France", "url": "https://www.ouest-france.fr/elections/municipales/municipales-2026-a-alencon-agression-au-bureau-de-vote-entre-deux-candidates-le-rn-porte-plainte-gauche-unie-repond-ba658f86-215b-11f1-a6e8-58f5162ee52a", "groupe_an": ""},
+    {"id": "75", "date": "2026-03-19", "victime": "QG de campagne de Foulques Chombart de Lauwe (LR) et Sarah El Haïry (MoDem), Nantes", "parti": "LR", "camp": "Droite", "niveau": 3, "sous_type": "", "resume": "Vandalisé dans la nuit par des « individus cagoulés », selon un communiqué de la liste.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "ICI Loire Océan", "url": "https://www.ici.fr/pays-de-la-loire/loire-atlantique-44/nantes/municipales-2026-la-permanence-de-campagne-de-foulques-chombart-de-lauwe-a-ete-vandalisee-a-nantes-4876587", "groupe_an": ""},
+    {"id": "76", "date": "2026-03-19", "victime": "Yassin Zeghli, candidat (Argenteuil)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 2, "sous_type": "", "resume": "Balle reçue dans sa boîte aux lettres ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "LCP", "url": "https://lcp.fr/actualites/municipales-a-argenteuil-le-candidat-lfi-trouve-une-balle-dans-sa-boite-aux-lettres-et", "groupe_an": ""},
+    {"id": "77", "date": "2026-03", "victime": "Sophie Dhoury-Lehner, maire sortante et candidate (Creil)", "parti": "PS", "camp": "Gauche", "niveau": 2, "sous_type": "", "resume": "Menaces de mort en ligne entre les deux tours ; enquête ouverte ; placée sous protection policière.", "nb_victimes": 1, "plainte": "inconnu", "suite": "enquête", "fondement": "constat", "type_source": "agrégateur", "lecture": "titre", "confiance": "faible", "source": "Ground News (résumé de presse)", "url": "https://ground.news/article/municipales-2026-an-outgoing-mayor-leading-in-the-first-round-placed-under-protection-in-oise-after-online-threats", "groupe_an": ""},
+    {"id": "78", "date": "2026-03-22", "victime": "Sophie Dhoury-Lehner, maire sortante, et ses colistiers (Creil)", "parti": "PS", "camp": "Gauche", "niveau": 2, "sous_type": "", "resume": "Retenus dans la mairie sous les insultes et les menaces après l'annonce des résultats ; exfiltrée par la police nationale.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Europe 1", "url": "https://www.europe1.fr/politique/ca-va-etre-une-poubelle-a-creil-des-habitants-inquiets-pour-lavenir-apres-la-victoire-de-la-france-insoumise-918712", "groupe_an": ""},
+    {"id": "79", "date": "2026-03-22", "victime": "Raphaël Cognet, maire sortant, et sa fille de 14 ans (Mantes-la-Jolie)", "parti": "Horizons", "camp": "Centre", "niveau": 2, "sous_type": "", "resume": "Hués, insultés et menacés par des soutiens de la liste victorieuse après l'annonce des résultats ; escorté par la police municipale. Scènes filmées.", "nb_victimes": 2, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Europe 1", "url": "https://www.europe1.fr/politique/cetait-un-moment-dune-extreme-violence-hue-insulte-le-maire-sortant-de-mantes-la-jolie-revient-sur-la-soiree-electorale-de-dimanche-917455", "groupe_an": ""},
+    {"id": "80", "date": "2026-03-22", "victime": "Hélène Geoffroy, maire sortante (Vaulx-en-Velin)", "parti": "PS", "camp": "Gauche", "niveau": 2, "sous_type": "", "resume": "Huée et insultée (« dégage de là », « tire-toi ») pendant la proclamation des résultats ; dénonce aussi des menaces depuis l'élection (« On va vous couper la tête »). Scènes filmées.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "haute", "source": "Europe 1", "url": "https://www.europe1.fr/politique/on-va-vous-couper-la-tete-a-vaulx-en-velin-la-maire-socialiste-sortante-helene-geoffroy-denonce-un-climat-inquietant-depuis-les-elections-917305", "groupe_an": ""},
+    {"id": "81", "date": "2026-03-22", "victime": "Thierry Meignen, sénateur et candidat (Le Blanc-Mesnil)", "parti": "LR", "camp": "Droite", "niveau": 1, "sous_type": "", "resume": "Hué et pris à partie après sa défaite ; quitte la salle sous escorte policière. Scènes filmées.", "nb_victimes": 1, "plainte": "inconnu", "suite": "", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Europe 1", "url": "https://www.europe1.fr/politique/creil-mantes-la-jolie-blanc-mesnil-des-maires-sortants-hues-ou-escortes-par-la-police-apres-leur-defaite-aux-municipales-916639", "groupe_an": ""},
+    {"id": "82", "date": "2026-07-11", "victime": "Militante RN de 17 ans (Polignac, Haute-Loire)", "parti": "RN", "camp": "Extrême droite", "niveau": 1, "sous_type": "", "resume": "Saluts nazis et injures antisémites pendant un collage d'affiches, selon le RN ; enquête ouverte par le parquet du Puy-en-Velay pour injures discriminatoires.", "nb_victimes": 1, "plainte": "oui", "suite": "enquête", "fondement": "constat", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "i24NEWS", "url": "https://www.i24news.tv/fr/actu/france/artc-haute-loire-enquete-ouverte-apres-des-accusations-d-agression-antisemite-visant-une-militante-du-rn", "groupe_an": ""},
+    {"id": "83", "date": "2026-08/09", "victime": "Aminata Pouye, conseillère municipale et candidate aux sénatoriales (Talence)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 4, "sous_type": "", "resume": "Insultée et aspergée d'un liquide irritant par quatre hommes en rentrant d'une réunion de campagne ; sans séquelle selon son mouvement ; plainte.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Brut", "url": "https://www.brut.media/fr/articles/france/politique/en-gironde-la-candidate-lfi-aux-senatoriales-aminata-pouye-denonce-une-violente-attaque-raciste", "groupe_an": ""},
+    {"id": "84", "date": "2026-09-12", "victime": "Deux militants RN sur un marché (Rennes)", "parti": "RN", "camp": "Extrême droite", "niveau": 4, "sous_type": "", "resume": "Insultés et « repoussés physiquement » par des militants présentés comme LFI, selon le RN ; plainte.", "nb_victimes": 2, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "presse", "lecture": "extrait", "confiance": "moyenne", "source": "Ouest-France", "url": "https://www.ouest-france.fr/bretagne/rennes-35000/deux-de-ses-militants-pris-a-partie-sur-un-marche-de-rennes-le-rassemblement-national-annonce-vouloir-porter-plainte-58704a00-b04e-11f1-8483-804bbf8224d2", "groupe_an": ""},
+    {"id": "85", "date": "2026-06-09", "victime": "Nordine Raymond, tête de liste (Bordeaux)", "parti": "LFI", "camp": "Gauche radicale", "niveau": 2, "sous_type": "", "resume": "Plainte pour plus de 10 000 messages racistes, injures et menaces de mort reçus pendant la campagne municipale.", "nb_victimes": 1, "plainte": "oui", "suite": "", "fondement": "déclaration", "type_source": "agrégateur", "lecture": "extrait", "confiance": "faible", "source": "info.fr", "url": "https://info.fr/bordeaux-nordine-raymond-plainte-messages-racistes-municipales/", "groupe_an": ""}
+  ],
+  "groupes": [
+    {"groupe": "RN", "nom": "Rassemblement national", "effectif": 122},
+    {"groupe": "EPR", "nom": "Ensemble pour la République", "effectif": 91},
+    {"groupe": "LFI-NFP", "nom": "La France insoumise", "effectif": 71},
+    {"groupe": "SOC", "nom": "Socialistes", "effectif": 68},
+    {"groupe": "DR", "nom": "Droite républicaine", "effectif": 48},
+    {"groupe": "EcoS", "nom": "Écologiste et social", "effectif": 38},
+    {"groupe": "Dem", "nom": "Les Démocrates", "effectif": 37},
+    {"groupe": "HOR", "nom": "Horizons", "effectif": 35},
+    {"groupe": "LIOT", "nom": "LIOT", "effectif": 23},
+    {"groupe": "GDR", "nom": "Gauche démocrate et républicaine", "effectif": 17},
+    {"groupe": "UDR", "nom": "Union des droites pour la République", "effectif": 17}
+  ],
+  "non_comptes": [
+    {"date": "2024-09-27", "fait": "Étudiant frappé au visage par deux militants d'extrême droite pour avoir recouvert un autocollant de La Cocarde (Paris II)", "camp_vise": "Hors parti (gauche)", "raison": "Question écrite n° 1265 (député LFI) seulement"},
+    {"date": "2024-11-19", "fait": "Militants de La Cocarde agressés à Tolbiac pendant un tractage (coups de couteau, vestes lacérées ; deux gardes à vue)", "camp_vise": "Hors parti (droite)", "raison": "Question écrite n° 2336 seulement"},
+    {"date": "2025-01-22", "fait": "Quatre membres de La Cocarde frappés à Strasbourg (4 j d'ITT chacun, plainte)", "camp_vise": "Hors parti (droite)", "raison": "Question écrite n° 4109 (députée RN) seulement"},
+    {"date": "2025-02-11", "fait": "Militants de l'UNI agressés à Toulouse (trois blessés)", "camp_vise": "Hors parti (droite)", "raison": "Question écrite n° 4109 (députée RN) seulement"},
+    {"date": "2025-12", "fait": "Tirs d'armes à feu dans la cour de la ferme de Benoît Biteau ; « chasse à la femme » contre Marine Tondelier ; menaces contre Sandrine Rousseau", "camp_vise": "Écologistes", "raison": "Question au gouvernement n° 1052 (B. Biteau) seulement"},
+    {"date": "2026-02-03/05", "fait": "Attaques de La Cocarde dans plusieurs facultés pendant les élections du Crous (Nanterre, Aix…)", "camp_vise": "Hors parti (gauche)", "raison": "Question écrite n° 12802 (député LFI) ; seul le cas d'Aix est compté, via la presse"},
+    {"date": "2026-02", "fait": "« Une quinzaine » de permanences ou locaux LFI attaqués après la mort de Quentin Deranque", "camp_vise": "LFI", "raison": "Déclaration agrégée de Manuel Bompard ; deux cas individuels comptés"},
+    {"date": "2024-12", "fait": "« Plus de 30 » permanences visées en une semaine par des agriculteurs, « surtout » NFP et RN", "camp_vise": "Plusieurs", "raison": "Total agrégé ; six cas nommés comptés"},
+    {"date": "2025", "fait": "Incendie évoqué par la députée PS Mélanie Thomin, plainte", "camp_vise": "PS", "raison": "Nature et cible imprécises dans l'extrait lu"},
+    {"date": "2026-03-22", "fait": "Billy-Montigny : affrontements entre militants communistes et d'extrême droite après la victoire du candidat RN, exfiltré puis protégé trois jours ; interpellations", "camp_vise": "Plusieurs", "raison": "Victimes des deux camps, non attribuables à un seul ; la version du député RN (question au gouvernement n° 1408) n'est pas recoupée sur ce point"},
+    {"date": "2026-03-09", "fait": "Le Blanc-Mesnil : colleurs d'affiches de Visa 93 « pris à partie » par des soutiens de Thierry Meignen ; trois militants de Visa 93 placés en garde à vue", "camp_vise": "Hors parti (gauche)", "raison": "Versions contradictoires, sources militantes seulement"}
+  ],
+  "exclus": [
+    {"date": "2026-03-27", "fait": "Mairie de Fresnes saccagée la veille de l'installation du nouveau maire LR ; neuf mineurs interpellés", "raison": "Cible institutionnelle ; mobile politique non établi (pillage)"},
+    {"date": "2026-03-04", "fait": "Angers : colistier d'une liste sans étiquette agressé en collant des affiches ; plainte", "raison": "Liste sans étiquette : pas de camp identifiable"},
+    {"date": "2026-03", "fait": "Lunel : soutien de la liste « Lunel, c'est vous ! » insulté puis victime d'une tentative d'étranglement, selon la tête de liste", "raison": "Étiquette de la liste non précisée"},
+    {"date": "2026-03", "fait": "Paris 19e : habitante juive insultée par des militants pro-LFI lors d'un porte-à-porte", "raison": "Victime hors du champ (ni élue ni militante)"},
+    {"date": "2026-11-07", "fait": "Farida Amrani (LFI) blessée par un mortier d'artifice dans un salon d'Évry", "raison": "Mobile non établi ; la piste d'un règlement de comptes sans lien politique est évoquée"},
+    {"date": "2024-02", "fait": "Menaces de Ritchy Thibault contre Emmanuel Macron (condamné à 4 mois avec sursis en 2026, appel)", "raison": "Faits antérieurs à la période"},
+    {"date": "2026", "fait": "Agression de Tim Bouzon, collaborateur d'une députée RN, par le mari de celle-ci", "raison": "Mobile privé"},
+    {"date": "—", "fait": "Menaces contre des magistrats (procès du RN, de N. Sarkozy) ou des chroniqueurs", "raison": "Victimes hors du champ (non élus ni militants)"},
+    {"date": "—", "fait": "Affiches arrachées ou taguées", "raison": "Exclues par principe : trop fréquentes et non recensées"}
+  ]
+}
+</script>
+
+<script>
+/* ==================================================================
+   0. Réglages de la page
+   ================================================================== */
+// Adresse qui reçoit les propositions envoyées par e-mail.
+// Assemblée en deux morceaux pour ne pas apparaître telle quelle aux robots qui collectent les adresses.
+// Laisser vide ('') pour masquer le bouton « Envoyer par e-mail ».
+const CONTACT_EMAIL = ['ponchaut.vincent', 'gmail.com'].join('@');
+const GITHUB_ISSUES = 'https://github.com/VincentPonchaut/analyses/issues/new';
+const PAGE_URL = 'https://vincentponchaut.github.io/analyses/violences-politiques/';
+
+/* ==================================================================
+   1. Données et référentiels
+   ================================================================== */
+const D = JSON.parse(document.getElementById('donnees').textContent);
+const EP = D.episodes, GR = D.groupes, NC = D.non_comptes, EX = D.exclus;
+
+const NIV = ['Injures', 'Menaces', 'Dégradations', 'Violence légère', 'Coups et blessures', 'Atteinte à la vie'];
+const NIV_DEF = [
+  'Insultes et messages hostiles sans menace.',
+  'Menaces, y compris de mort ou avec une arme sans contact, envoi de munitions, alerte à la bombe, appel au meurtre.',
+  'Permanence, local, domicile ou véhicule dégradé.',
+  'Projectile (farine, œuf), bousculade, ou attaque dont la presse ne rapporte ni coups ni blessures.',
+  'Victime frappée ou blessée.',
+  'Homicide, tentative, ou nom sur la liste de cibles d’un auteur d’attentat.'
+];
+
+const CAMPS = [
+  { k: 'Gauche radicale', partis: 'La France insoumise (LFI).',
+    note: 'Généralement qualifiée de gauche radicale ; classée à gauche par le ministère de l’Intérieur jusqu’en 2024. La circulaire de Laurent Nuñez du 2 février 2026 l’a rangée pour la première fois à l’extrême gauche, avec Lutte ouvrière et le NPA, en invoquant son rapport aux institutions. LFI le conteste ; le Conseil d’État n’y a pas vu d’erreur manifeste, contrôle restreint qui ne tranche pas le fond. La page ne reprend pas ce reclassement.' },
+  { k: 'Gauche', partis: 'Parti socialiste, Les Écologistes, Parti communiste ; victimes présentées comme membres du Nouveau Front populaire sans parti précisé ; autres candidats de gauche.' },
+  { k: 'Centre', partis: 'Renaissance, MoDem, Horizons ; listes de centre ou de centre droit sans étiquette nationale.' },
+  { k: 'Droite', partis: 'Les Républicains (LR).' },
+  { k: 'Extrême droite', partis: 'Rassemblement national, UDR (Éric Ciotti, allié du RN), Reconquête.',
+    note: 'Classés à l’extrême droite de façon constante par le ministère de l’Intérieur. Le RN l’a contesté, puis l’UDR : le Conseil d’État a rejeté les deux recours (2024, 2026).' },
+  { k: 'Hors parti, gauche', partis: 'Militants sans parti : syndicats étudiants, antifascistes.',
+    note: 'Comptés à part pour ne pas les assimiler à un parti.' },
+  { k: 'Hors parti, droite', titre: 'Hors parti, droite (ultradroite)', partis: 'Militants sans parti : identitaires, nationalistes, syndicat étudiant La Cocarde.',
+    note: 'Souvent désignés « ultradroite ». Comptés à part pour ne pas les assimiler à un parti.' }
+];
+const CAMP = Object.fromEntries(CAMPS.map(c => [c.k, c]));
+
+const PARTIS = [
+  { k: 'LFI', court: 'LFI', nom: 'La France insoumise', camp: 'Gauche radicale' },
+  { k: 'PCF', court: 'PCF', nom: 'Parti communiste français', camp: 'Gauche' },
+  { k: 'Écologistes', court: 'Écologistes', nom: 'Les Écologistes (ex-EELV)', camp: 'Gauche' },
+  { k: 'PS', court: 'PS', nom: 'Parti socialiste', camp: 'Gauche' },
+  { k: 'Gauche (NFP, parti non précisé)', court: 'NFP, parti non précisé', nom: 'Victime présentée comme membre ou soutien du Nouveau Front populaire, sans parti précisé', camp: 'Gauche' },
+  { k: 'Gauche (autre)', court: 'Gauche, autre', nom: 'Candidat de gauche sans parti national précisé', camp: 'Gauche' },
+  { k: 'Renaissance', court: 'Renaissance', nom: 'Renaissance, parti présidentiel', camp: 'Centre' },
+  { k: 'MoDem', court: 'MoDem', nom: 'Mouvement démocrate', camp: 'Centre' },
+  { k: 'Horizons', court: 'Horizons', nom: 'Horizons, parti d’Édouard Philippe', camp: 'Centre' },
+  { k: 'Centre (divers)', court: 'Centre, divers', nom: 'Liste de centre ou de centre droit sans étiquette nationale (Cœur lyonnais, liste de J.-M. Aulas à Lyon)', camp: 'Centre' },
+  { k: 'LR', court: 'LR', nom: 'Les Républicains', camp: 'Droite' },
+  { k: 'UDR', court: 'UDR', nom: 'Union des droites pour la République (Éric Ciotti), alliée du RN', camp: 'Extrême droite' },
+  { k: 'RN', court: 'RN', nom: 'Rassemblement national', camp: 'Extrême droite' },
+  { k: 'Reconquête', court: 'Reconquête', nom: 'Reconquête, parti d’Éric Zemmour', camp: 'Extrême droite' },
+  { k: 'Hors parti (gauche)', court: 'Hors parti, gauche', nom: 'Militants sans parti, à gauche', camp: 'Hors parti, gauche' },
+  { k: 'Hors parti (droite)', court: 'Hors parti, droite', nom: 'Militants sans parti, à droite', camp: 'Hors parti, droite' }
+];
+const PARTI = Object.fromEntries(PARTIS.map(p => [p.k, p]));
+
+const BASES = {
+  tous: () => true,
+  constats: e => e.fondement === 'constat',
+  fiables: e => e.confiance !== 'faible'
+};
+const state = { base: 'tous', grp: 'camp' };
+
+/* ==================================================================
+   2. Outils
+   ================================================================== */
+const nf = new Intl.NumberFormat('fr-FR');
+const nf1 = new Intl.NumberFormat('fr-FR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const plur = (n, s, p) => `${nf.format(n)} ${n > 1 ? (p || s + 's') : s}`;
+const MOIS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+function fdate(s) {
+  const p = String(s).split('-');
+  if (p.length === 3 && /^\d+$/.test(p[2])) return `${Number(p[2])} ${MOIS[Number(p[1]) - 1]} ${p[0]}`;
+  if (p.length === 2 && /^\d+$/.test(p[1])) return `${MOIS[Number(p[1]) - 1]} ${p[0]}`;
+  if (/^\d{4}-\d{2}\/\d{2}$/.test(s)) { const [y, m] = s.split('-'); const [a, b] = m.split('/'); return `${MOIS[a - 1]}-${MOIS[b - 1]} ${y}`; }
+  return String(s);
+}
+const safeUrl = u => /^https?:\/\//i.test(u || '') ? u : '';
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const campOf = parti => (PARTI[parti] || {}).camp || '';
+const courtParti = k => (PARTI[k] || {}).court || k;
+
+let _ctx = null;
+function tw(t, size = 12.5, weight = 400) {
+  if (!_ctx) _ctx = document.createElement('canvas').getContext('2d');
+  _ctx.font = `${weight} ${size}px system-ui,-apple-system,"Segoe UI",sans-serif`;
+  return _ctx.measureText(t).width;
+}
+function niceStep(max, n, minStep) {
+  const raw = max / Math.max(1, n);
+  const p = Math.pow(10, Math.floor(Math.log10(raw || 1)));
+  let s = 10 * p;
+  for (const m of [1, 2, 5, 10]) if (m * p >= raw) { s = m * p; break; }
+  return Math.max(minStep, s);
+}
+function roundRight(x, y, w, h, r) {
+  const rr = Math.min(r, w, h / 2);
+  return `M${x},${y}H${x + w - rr}A${rr},${rr} 0 0 1 ${x + w},${y + rr}V${y + h - rr}A${rr},${rr} 0 0 1 ${x + w - rr},${y + h}H${x}Z`;
+}
+
+/* ==================================================================
+   3. Infobulles
+   ================================================================== */
+function bindTip(box, content) {
+  const tip = box.querySelector('.tip');
+  const show = e => {
+    const t = e.target.closest('[data-i]');
+    if (!t || !box.contains(t)) { tip.classList.remove('on'); return; }
+    tip.innerHTML = content(box._rows[Number(t.dataset.i)]);
+    const r = box.getBoundingClientRect();
+    const x = e.clientX - r.left, y = e.clientY - r.top;
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    let l = x + 14; if (l + w > r.width) l = Math.max(0, x - w - 14);
+    let tp = y - h - 12; if (tp < 0) tp = y + 18;
+    tip.style.transform = `translate(${l}px,${tp}px)`;
+    tip.classList.add('on');
+  };
+  box.addEventListener('pointermove', show);
+  box.addEventListener('pointerdown', show);
+  box.addEventListener('pointerleave', () => tip.classList.remove('on'));
+}
+const trow = (label, val, sw) => `<div class="tip-r"><span>${sw ? `<i class="sq" style="background:${sw}"></i>` : ''}${esc(label)}</span><b>${esc(val)}</b></div>`;
+
+function campInfo(k) {
+  const c = CAMP[k];
+  if (!c) return '';
+  return `<div class="tip-p">${esc(c.partis)}</div>${c.note ? `<div class="tip-x">${esc(c.note)}</div>` : ''}`;
+}
+function labelTip(el) {
+  if (el.dataset.camp) {
+    const c = CAMP[el.dataset.camp];
+    return `<div class="tip-h">${esc(c ? (c.titre || c.k) : el.dataset.camp)}</div>${campInfo(el.dataset.camp)}`;
+  }
+  const p = PARTI[el.dataset.parti];
+  if (!p) return `<div class="tip-h">${esc(el.dataset.parti)}</div>`;
+  const c = CAMP[p.camp];
+  return `<div class="tip-h">${esc(p.court)}</div><div class="tip-p">${esc(p.nom)}</div>` +
+    `<div class="tip-x tip-s">Camp : <b>${esc(c ? (c.titre || c.k) : p.camp)}</b>${c && c.note ? '. ' + esc(c.note) : ''}</div>`;
+}
+const ltip = document.getElementById('ltip');
+let ltEl = null;
+function ltShow(el) {
+  ltEl = el;
+  ltip.innerHTML = labelTip(el);
+  ltip.classList.add('on');
+  const r = el.getBoundingClientRect();
+  const w = ltip.offsetWidth, h = ltip.offsetHeight;
+  const l = Math.min(window.innerWidth - w - 8, Math.max(8, r.left));
+  let t = r.bottom + 8;
+  if (t + h > window.innerHeight - 8) t = Math.max(8, r.top - h - 8);
+  ltip.style.transform = `translate(${l}px,${t}px)`;
+}
+function ltHide() { ltEl = null; ltip.classList.remove('on'); }
+document.addEventListener('pointerover', e => { const el = e.target.closest('.lbl'); if (el && el !== ltEl) ltShow(el); });
+document.addEventListener('pointerout', e => {
+  if (e.pointerType === 'touch') return;
+  const el = e.target.closest('.lbl');
+  if (el && !el.contains(e.relatedTarget)) ltHide();
+});
+document.addEventListener('pointerdown', e => { const el = e.target.closest('.lbl'); if (el) ltShow(el); else ltHide(); });
+document.addEventListener('focusin', e => { const el = e.target.closest('.lbl'); if (el) ltShow(el); });
+document.addEventListener('focusout', e => { if (e.target.closest('.lbl')) ltHide(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') ltHide(); });
+window.addEventListener('scroll', () => { if (ltEl) ltHide(); }, { passive: true });
+
+const lblCamp = (k, txt) => `<span class="lbl" tabindex="0" data-camp="${esc(k)}">${esc(txt || k)}</span>`;
+const lblParti = k => PARTI[k] ? `<span class="lbl" tabindex="0" data-parti="${esc(k)}">${esc(courtParti(k))}</span>` : esc(k);
+
+/* ==================================================================
+   4. Comptes
+   ================================================================== */
+const sel = () => EP.filter(BASES[state.base]);
+function categories() {
+  return state.grp === 'camp'
+    ? CAMPS.map(c => ({ k: c.k, label: c.k, type: 'camp', sep: c.k === 'Hors parti, gauche' }))
+    : PARTIS.map(p => ({ k: p.k, label: p.court, type: 'parti', sep: p.k === 'Hors parti (gauche)' }));
+}
+function comptes() {
+  const e = sel(), key = state.grp;
+  return categories().map(c => {
+    const r = e.filter(x => x[key] === c.k);
+    return {
+      ...c, v: [1, 2, 3, 4, 5, 6].map(n => r.filter(x => x.niveau === n).length), total: r.length,
+      morts: r.filter(x => x.sous_type === 'mort').length, cibles: r.filter(x => x.sous_type === 'cible nommée').length
+    };
+  });
+}
+
+/* ==================================================================
+   5. Barres horizontales (empilées ou simples)
+   ================================================================== */
+function bars(box, rows, o) {
+  const W = Math.max(260, Math.round(box.clientWidth));
+  const fs = 12.5, rowH = o.rowH || 28, bh = o.barH || 14, top = 4, gap = 12;
+  const fmt = o.fmt || (v => nf.format(v));
+  const ml = o.ml || Math.ceil(Math.max(...rows.map(r => tw(r.label, fs)))) + 12;
+  const endw = Math.ceil(Math.max(...rows.map(r => tw(fmt(r.total), 12)))) + 10;
+  const plotW = Math.max(40, W - ml - endw);
+  const max = o.max || Math.max(1, ...rows.map(r => r.total));
+  const step = niceStep(max, Math.max(3, Math.floor(plotW / 55)), o.minStep || 1);
+  const tfmt = o.tickFmt || fmt;
+  const dom = Math.ceil(max / step - 1e-9) * step;
+  const x = v => ml + (v / dom) * plotW;
+  const nSep = rows.filter(r => r.sep).length;
+  const plotH = rows.length * rowH + nSep * gap;
+  const H = top + plotH + 20;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.aria)}">`;
+  for (let t = 0; t <= dom + 1e-9; t += step) {
+    const xx = x(t);
+    s += `<line x1="${xx}" x2="${xx}" y1="${top}" y2="${top + plotH}" stroke="${t === 0 ? 'var(--axis)' : 'var(--grid)'}" stroke-width="1"/>`;
+    s += `<text x="${xx}" y="${H - 4}" text-anchor="middle" fill="var(--ink-muted)" font-size="11">${esc(tfmt(Math.round(t * 10) / 10))}</text>`;
+  }
+  let y0 = top;
+  rows.forEach((r, i) => {
+    if (r.sep) y0 += gap;
+    const y = y0 + (rowH - bh) / 2;
+    s += `<text x="${ml - 10}" y="${y + bh / 2}" dy=".35em" text-anchor="end" fill="var(--ink)" font-size="${fs}">${esc(r.label)}</text>`;
+    let acc = 0;
+    const segs = r.v.map((v, k) => { const g = { k, v, x0: acc }; acc += v; return g; }).filter(g => g.v > 0);
+    segs.forEach((g, j) => {
+      const xa = x(g.x0) + (g.x0 === 0 ? 0.5 : 0), xb = x(g.x0 + g.v);
+      const last = j === segs.length - 1;
+      const w = Math.max(1, xb - xa - (last ? 0 : 2));
+      const fill = o.fill(g.k);
+      s += last ? `<path d="${roundRight(xa, y, w, bh, 4)}" fill="${fill}"/>` : `<rect x="${xa}" y="${y}" width="${w}" height="${bh}" fill="${fill}"/>`;
+    });
+    s += `<text x="${x(r.total) + 6}" y="${y + bh / 2}" dy=".35em" fill="${r.total ? 'var(--ink-2)' : 'var(--ink-muted)'}" font-size="12">${esc(fmt(r.total))}</text>`;
+    s += `<rect data-i="${i}" x="0" y="${y0}" width="${W}" height="${rowH}" fill="transparent"/>`;
+    y0 += rowH;
+  });
+  s += '</svg>';
+  const old = box.querySelector('svg');
+  if (old) old.remove();
+  box.insertAdjacentHTML('afterbegin', s);
+  box._rows = rows;
+}
+
+function catHead(r) {
+  if (r.type === 'camp') { const c = CAMP[r.k]; return `<div class="tip-h">${esc(c.titre || c.k)}</div>`; }
+  const p = PARTI[r.k];
+  return `<div class="tip-h">${esc(p.court)}</div><div class="tip-x" style="margin-top:0">${esc(p.nom)} · ${esc((CAMP[p.camp] || {}).titre || p.camp)}</div>`;
+}
+// Détail d'une barre : par parti pour un camp, sinon la liste des épisodes.
+function detail(r, niv) {
+  const eps = sel().filter(x => x[state.grp] === r.k && (!niv || x.niveau === niv));
+  const partis = r.type === 'camp' ? PARTIS.filter(p => p.camp === r.k && !p.k.startsWith('Hors parti')) : [];
+  if (partis.length) {
+    const ps = partis.map((p, i) => ({ k: p.k, lab: p.court, i, n: eps.filter(e => e.parti === p.k).length }));
+    eps.forEach(e => { if (!ps.some(o => o.k === e.parti)) ps.push({ k: e.parti, lab: courtParti(e.parti), i: 99, n: eps.filter(x => x.parti === e.parti).length }); });
+    ps.sort((a, b) => b.n - a.n || a.i - b.i);
+    return ps.map(o => trow(o.lab, plur(o.n, 'épisode'))).join('');
+  }
+  if (!eps.length) return '<div class="tip-x">Aucun épisode</div>';
+  const top = eps.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+  const more = eps.length - top.length;
+  return top.map(e => `<div class="tip-e"><span>${esc(fdate(e.date))}</span> ${esc(e.victime.length > 60 ? e.victime.slice(0, 59) + '…' : e.victime)}</div>`).join('') +
+    (more ? `<div class="tip-x">et ${plur(more, 'autre')}</div>` : '');
+}
+
+function drawGeneral() {
+  const box = document.getElementById('ch-general');
+  bars(box, comptes(), {
+    aria: `Barres empilées : nombre d’épisodes par ${state.grp === 'camp' ? 'camp' : 'parti'} de la victime et par degré de violence`,
+    fill: k => `var(--l${k + 1})`
+  });
+}
+function tipGeneral(r) {
+  const niv = r.v.map((v, k) => trow(`${k + 1} ${NIV[k]}`, nf.format(v), `var(--l${k + 1})`)).join('');
+  return catHead(r) + (r.type === 'camp' ? detail(r, 0) : '') + `<div class="tip-s">${niv}</div>`;
+}
+
+function drawMinis() {
+  const wrap = document.getElementById('minis');
+  const rows = comptes();
+  const max = Math.max(1, ...rows.flatMap(r => r.v));
+  const ml = Math.ceil(Math.max(...rows.map(r => tw(r.label, 12.5)))) + 12;
+  wrap.querySelectorAll('.chart').forEach(box => {
+    const n = Number(box.dataset.n);
+    const rr = rows.map(r => ({ ...r, v: [r.v[n - 1]], total: r.v[n - 1], niv: n }));
+    bars(box, rr, {
+      aria: `Barres : épisodes de niveau ${n} (${NIV[n - 1]}) par ${state.grp === 'camp' ? 'camp' : 'parti'}`,
+      rowH: 22, barH: 11, max, ml, fill: () => 'var(--acc)'
+    });
+  });
+}
+function tipMini(r) {
+  let s = catHead(r) + detail(r, r.niv);
+  if (r.niv === 6 && r.total) {
+    const parts = [];
+    if (r.morts) parts.push(plur(r.morts, 'homicide'));
+    if (r.cibles) parts.push(plur(r.cibles, 'inscription sur une liste de cibles', 'inscriptions sur une liste de cibles'));
+    if (parts.length) s += `<div class="tip-x tip-s">Dont ${parts.join(', ')}</div>`;
+  }
+  return s;
+}
+
+function drawDeputes() {
+  const box = document.getElementById('ch-deputes');
+  const e = sel();
+  const rows = GR.map(g => {
+    const n = e.filter(x => x.groupe_an === g.groupe).length;
+    return { k: g.groupe, label: g.groupe, nom: g.nom, effectif: g.effectif, n, v: [Math.round(1000 * n / g.effectif) / 10], total: Math.round(1000 * n / g.effectif) / 10 };
+  }).sort((a, b) => b.total - a.total || a.label.localeCompare(b.label, 'fr'));
+  bars(box, rows, {
+    aria: 'Barres : épisodes visant des députés pour 100 députés, par groupe',
+    rowH: 26, barH: 12, minStep: 0.5, fmt: v => nf1.format(v), tickFmt: v => nf.format(v), fill: () => 'var(--acc)'
+  });
+}
+function tipDeputes(r) {
+  return `<div class="tip-h">${esc(r.label)}</div><div class="tip-p">${esc(r.nom)}</div><div class="tip-s">` +
+    trow('Épisodes', nf.format(r.n)) + trow('Députés du groupe', nf.format(r.effectif)) + trow('Pour 100 députés', nf1.format(r.total)) + '</div>';
+}
+
+/* ==================================================================
+   6. Chiffres clés, légende, tableaux
+   ================================================================== */
+function drawKpis() {
+  const G = ['Gauche radicale', 'Gauche'], Dr = ['Droite', 'Extrême droite'];
+  const aG = e => G.includes(e.camp) || e.camp === 'Hors parti, gauche';
+  const aD = e => Dr.includes(e.camp) || e.camp === 'Hors parti, droite';
+  const n = f => EP.filter(f).length;
+  const hg = n(e => e.camp === 'Hors parti, gauche'), hd = n(e => e.camp === 'Hors parti, droite');
+  document.getElementById('k-total').textContent = nf.format(EP.length);
+  document.getElementById('k-gauche').textContent = nf.format(n(e => G.includes(e.camp)));
+  document.getElementById('k-centre').textContent = nf.format(n(e => e.camp === 'Centre'));
+  document.getElementById('k-droite').textContent = nf.format(n(e => Dr.includes(e.camp)));
+  document.getElementById('k-hors').textContent = nf.format(hg + hd);
+  document.getElementById('k-hors-c').textContent = `visent des militants sans parti (${nf.format(hg)} à gauche, ${nf.format(hd)} à droite)`;
+  const l4ED = n(e => e.niveau === 4 && e.camp === 'Extrême droite');
+  const morts = EP.filter(e => e.sous_type === 'mort'), cibles = EP.filter(e => e.sous_type === 'cible nommée');
+  const lines = [
+    `<b>Coups et blessures</b> : ${plur(n(e => e.niveau === 5 && aG(e)), 'épisode')} visent la gauche ou des militants de gauche, ${nf.format(n(e => e.niveau === 5 && e.camp === 'Centre'))} le centre, ${nf.format(n(e => e.niveau === 5 && aD(e)))} la droite ou des militants de droite.`,
+    `<b>Violence légère</b> (projectiles, bousculades) : ${nf.format(n(e => e.niveau === 4 && aG(e)))} à gauche, ${nf.format(n(e => e.niveau === 4 && e.camp === 'Centre'))} au centre, ${nf.format(n(e => e.niveau === 4 && aD(e)))} à droite, dont ${nf.format(l4ED)} contre l’extrême droite.`,
+    `<b>Atteintes à la vie</b> : ${plur(morts.length, 'homicide')}${morts.length ? ` (${morts.map(e => esc(e.victime.split(',')[0]) + ', ' + fdate(e.date)).join(' ; ')})` : ''} et ${plur(cibles.length, 'épisode')} où des élus figurent sur la liste de cibles d’un auteur d’attentat.`,
+    'Ces chiffres portent sur tous les épisodes ; les réglages plus bas permettent d’écarter les déclarations non étayées et les sources faibles.'
+  ];
+  document.getElementById('k-extra').innerHTML = lines.map(t => `<p><span class="glyph" aria-hidden="true">→</span><span>${t}</span></p>`).join('');
+  const extraits = n(e => e.lecture !== 'article'), decl = n(e => e.fondement === 'déclaration'), faibles = n(e => e.confiance === 'faible');
+  document.getElementById('n-fiab').innerHTML = `${plur(extraits, 'épisode')} sur ${nf.format(EP.length)} n’ont été lus qu’en extrait, ${nf.format(decl)} reposent sur la seule parole de la victime ou de son camp, et ${nf.format(faibles)} viennent d’une source faible. <b>Les réglages au-dessus des graphiques permettent de les écarter</b> : les écarts entre camps changent alors sensiblement.`;
+  const per = EP.filter(e => e.date >= '2025-09' && e.date < '2026-04');
+  const pc = k => per.filter(e => e.camp === k).length;
+  document.getElementById('cmp-officiels').textContent =
+    `Un recensement ciblé de la campagne (septembre 2025 – mars 2026), mené le 24 novembre 2026 avec les mêmes requêtes pour tous les partis et les déclarations du ministère comme pistes, a ajouté 17 épisodes sur cette période. La page y compte désormais ${plur(per.length, 'épisode')} : ${nf.format(pc('Gauche radicale'))} visent LFI, ${nf.format(pc('Extrême droite'))} l’extrême droite, ${nf.format(pc('Gauche'))} le reste de la gauche, ${nf.format(pc('Droite') + pc('Centre'))} la droite et le centre, ${nf.format(pc('Hors parti, gauche') + pc('Hors parti, droite'))} des militants sans parti. L’écart signalé par le renseignement territorial n’apparaît donc pas dans la presse. Il peut venir de faits que la presse ne rapporte pas (menaces en ligne, incidents locaux sans suite), d’une autre définition des « atteintes » ou du nombre de candidats de chaque parti : sans publication de la méthode, impossible de trancher.`;
+}
+
+function drawStatic() {
+  document.getElementById('camps').innerHTML = CAMPS.map(c => `<span class="chip lbl" tabindex="0" data-camp="${esc(c.k)}">${esc(c.titre || c.k)}</span>`).join('');
+  document.getElementById('legende').innerHTML = NIV.map((t, k) => `<span class="key"><i class="sq" style="background:var(--l${k + 1})"></i>${k + 1} ${esc(t)}</span>`).join('');
+  document.getElementById('minis').innerHTML = NIV.map((t, k) => `<div class="mini"><h3>${k + 1} · ${esc(t)}</h3><p>${esc(NIV_DEF[k])}</p><div class="chart" data-n="${k + 1}"><div class="tip"></div></div></div>`).join('');
+  document.querySelectorAll('#minis .chart').forEach(b => bindTip(b, tipMini));
+  document.getElementById('m-niveaux').innerHTML = NIV.map((t, k) => `<li>${k + 1} ${esc(t)} : ${esc(NIV_DEF[k].charAt(0).toLowerCase() + NIV_DEF[k].slice(1))}</li>`).join('');
+  document.getElementById('m-camps').innerHTML = CAMPS.map(c => `<li>${lblCamp(c.k, c.titre || c.k)} : ${esc(c.partis)}</li>`).join('');
+  const fn = document.getElementById('f-niveau');
+  NIV.forEach((t, k) => fn.insertAdjacentHTML('beforeend', `<option value="${k + 1}">${k + 1} ${esc(t)}</option>`));
+  const fc = document.getElementById('f-camp');
+  CAMPS.forEach(c => fc.insertAdjacentHTML('beforeend', `<option value="${esc(c.k)}">${esc(c.k)}</option>`));
+  document.querySelector('#t-nc tbody').innerHTML = NC.map(r => `<tr><td class="l" style="white-space:nowrap">${esc(fdate(r.date))}</td><td class="l">${esc(r.fait)}</td><td class="l">${lblParti(r.camp_vise)}</td><td class="l">${esc(r.raison)}</td></tr>`).join('');
+  document.querySelector('#t-ex tbody').innerHTML = EX.map(r => `<tr><td class="l" style="white-space:nowrap">${esc(fdate(r.date))}</td><td class="l">${esc(r.fait)}</td><td class="l">${esc(r.raison)}</td></tr>`).join('');
+}
+
+function drawPlaintes() {
+  const e = sel();
+  document.querySelector('#t-plaintes tbody').innerHTML = CAMPS.map(c => {
+    const r = e.filter(x => x.camp === c.k), p = r.filter(x => x.plainte === 'oui').length;
+    return `<tr><td class="l">${lblCamp(c.k)}</td><td>${nf.format(r.length)}</td><td>${nf.format(p)}</td><td>${r.length ? Math.round(100 * p / r.length) + ' %' : '—'}</td></tr>`;
+  }).join('');
+}
+
+const LECTURE = { article: 'article lu', extrait: 'lu en extrait', titre: 'titre seul' };
+function drawTable() {
+  const fn = document.getElementById('f-niveau').value, fc = document.getElementById('f-camp').value;
+  const q = norm(document.getElementById('f-q').value.trim());
+  const rows = sel().filter(e => (!fn || e.niveau === Number(fn)) && (!fc || e.camp === fc) &&
+    (!q || norm([e.victime, e.resume, e.source, e.parti, courtParti(e.parti), e.date, e.suite].join(' ')).includes(q)))
+    .sort((a, b) => b.date.localeCompare(a.date) || Number(b.id) - Number(a.id));
+  document.querySelector('#t-ep tbody').innerHTML = rows.map(e => {
+    const url = safeUrl(e.url);
+    const fond = e.fondement === 'constat' ? 'fait établi' : 'déclaration';
+    const sub = e.sous_type ? ` <span class="small">${esc(e.sous_type)}</span>` : '';
+    return `<tr>
+<td class="l n">${esc(e.id)}</td>
+<td class="l d">${esc(fdate(e.date))}</td>
+<td class="l v">${esc(e.victime)}</td>
+<td class="l">${lblParti(e.parti)}</td>
+<td class="l" style="white-space:nowrap"><i class="sq" style="background:var(--l${e.niveau})"></i>${e.niveau} ${esc(NIV[e.niveau - 1])}${sub}</td>
+<td class="l t">${esc(e.resume)}${e.suite ? `<span class="small">Suites : ${esc(e.suite)}</span>` : ''}</td>
+<td class="l">${esc(e.plainte === 'inconnu' ? '—' : e.plainte)}</td>
+<td class="l"><span class="pill ${esc(e.confiance)}">${esc(e.confiance)}</span><span class="small">${fond} ; ${esc(e.type_source)}, ${esc(LECTURE[e.lecture] || e.lecture)}</span></td>
+<td class="l src">${url ? `<a href="${esc(url)}" rel="noopener" target="_blank">${esc(e.source)}</a>` : esc(e.source)}</td>
+<td class="l"><button type="button" class="fix" data-id="${esc(e.id)}">Corriger</button></td>
+</tr>`;
+  }).join('');
+  document.getElementById('f-count').textContent = `${plur(rows.length, 'épisode affiché', 'épisodes affichés')}`;
+}
+
+/* ==================================================================
+   7. Contribution
+   ================================================================== */
+const form = document.getElementById('propose');
+const fv = name => (form.elements[name].value || '').trim();
+function fillSelects() {
+  form.elements.parti.innerHTML = '<option value="">je ne sais pas</option>' + PARTIS.map(p => `<option value="${esc(p.k)}">${esc(p.court)}</option>`).join('') + '<option value="autre">autre (préciser dans la description)</option>';
+  form.elements.niveau.innerHTML = '<option value="">je ne sais pas</option>' + NIV.map((t, k) => `<option value="${k + 1}">${k + 1} ${esc(t)}</option>`).join('');
+}
+function ftype() { return form.querySelector('input[name="type"]:checked').value; }
+function syncType() {
+  const t = ftype();
+  form.querySelectorAll('[data-for]').forEach(el => { el.hidden = !el.dataset.for.split(' ').includes(t); });
+  form.querySelectorAll('.r-nouveau').forEach(el => el.classList.toggle('req', t === 'nouveau'));
+  preview();
+}
+function buildText() {
+  const t = ftype();
+  const T = { nouveau: 'Nouveau fait', correction: 'Correction', remarque: 'Remarque sur la méthode' }[t];
+  const parti = fv('parti'), niv = fv('niveau');
+  const L = [`Type : ${T}`];
+  if (t === 'correction') L.push(`Épisode concerné : n° ${fv('id') || '?'}`);
+  if (t !== 'remarque') {
+    L.push(`Date des faits : ${fv('date') || 'non précisée'}`);
+    L.push(`Victime : ${fv('victime') || 'non précisée'}`);
+    L.push(`Parti ou mouvance : ${parti ? (parti === 'autre' ? 'autre' : courtParti(parti)) : 'non précisé'}`);
+    L.push(`Nature des faits : ${niv ? niv + ' ' + NIV[niv - 1] : 'non précisée'}`);
+    L.push(`Plainte : ${fv('plainte') || 'inconnue'}`);
+    L.push(`Source : ${fv('source') || 'aucune'}`);
+    const autres = fv('autres');
+    if (autres) L.push(`Autres sources :\n${autres}`);
+  }
+  L.push('', 'Description :', fv('description') || '(vide)');
+  if (fv('auteur')) L.push('', `Proposé par : ${fv('auteur')}`);
+  L.push('', '—', `Envoyé depuis ${PAGE_URL}`);
+  return L.join('\n');
+}
+function buildTitle() {
+  const t = ftype();
+  if (t === 'correction') return `[Correction] épisode n° ${fv('id') || '?'}`;
+  if (t === 'remarque') return '[Méthode] remarque sur la page violences politiques';
+  return `[Fait proposé] ${fv('date') || 'date ?'} · ${fv('victime').slice(0, 70) || 'victime ?'}`;
+}
+function check() {
+  const t = ftype(), miss = [];
+  if (t === 'correction' && !EP.some(e => e.id === fv('id'))) miss.push('un numéro d’épisode existant');
+  if (t === 'nouveau') {
+    if (!fv('date')) miss.push('la date');
+    if (!fv('victime')) miss.push('la victime');
+    if (!safeUrl(fv('source'))) miss.push('un lien vers la source (commençant par http)');
+  }
+  if (!fv('description')) miss.push('une description');
+  return miss;
+}
+function msg(text, err) { const m = document.getElementById('f-msg'); m.textContent = text; m.classList.toggle('err', !!err); }
+function preview() {
+  document.getElementById('f-preview').textContent = buildText();
+  const mail = document.getElementById('b-mail');
+  if (CONTACT_EMAIL) {
+    mail.hidden = false;
+    mail.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(buildTitle())}&body=${encodeURIComponent(buildText().replace(/\n/g, '\r\n'))}`;
+  }
+}
+function guard(e) {
+  const miss = check();
+  if (miss.length) { if (e) e.preventDefault(); msg(`Il manque ${miss.join(', ')}.`, true); return false; }
+  msg('');
+  return true;
+}
+function initForm() {
+  fillSelects();
+  document.getElementById('mail-hint').hidden = !CONTACT_EMAIL;
+  form.addEventListener('input', preview);
+  form.addEventListener('change', e => { if (e.target.name === 'type') syncType(); else preview(); });
+  document.getElementById('b-gh').addEventListener('click', () => {
+    if (!guard()) return;
+    const url = `${GITHUB_ISSUES}?title=${encodeURIComponent(buildTitle())}&body=${encodeURIComponent(buildText())}`;
+    window.open(url, '_blank', 'noopener');
+    msg('Une page GitHub s’est ouverte : il reste à cliquer sur « Create » pour envoyer.');
+  });
+  document.getElementById('b-mail').addEventListener('click', e => { if (guard(e)) msg('Votre messagerie s’ouvre avec le texte prérempli.'); });
+  document.getElementById('b-copy').addEventListener('click', async () => {
+    const txt = `${buildTitle()}\n\n${buildText()}`;
+    try { await navigator.clipboard.writeText(txt); msg('Texte copié.'); }
+    catch (err) {
+      const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); msg('Texte copié.'); } catch (e2) { msg('La copie a échoué : sélectionnez le texte ci-dessous.', true); }
+      ta.remove();
+    }
+  });
+  document.getElementById('t-ep').addEventListener('click', e => {
+    const b = e.target.closest('.fix');
+    if (!b) return;
+    const ep = EP.find(x => x.id === b.dataset.id);
+    form.querySelector('input[name="type"][value="correction"]').checked = true;
+    form.elements.id.value = ep.id;
+    form.elements.date.value = ep.date;
+    form.elements.victime.value = ep.victime;
+    form.elements.parti.value = ep.parti;
+    form.elements.niveau.value = String(ep.niveau);
+    form.elements.plainte.value = ep.plainte === 'oui' || ep.plainte === 'non' ? ep.plainte : '';
+    form.elements.source.value = ep.url;
+    form.elements.description.value = '';
+    syncType();
+    document.getElementById('contribuer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => form.elements.description.focus({ preventScroll: true }), 400);
+    msg(`Épisode n° ${ep.id} prérempli : décrivez ce qu’il faut corriger.`);
+  });
+  syncType();
+}
+
+/* ==================================================================
+   8. Thème, réglages, dessin
+   ================================================================== */
+const themeBtn = document.getElementById('theme');
+let theme = 'dark';
+try { theme = localStorage.getItem('theme') === 'light' ? 'light' : 'dark'; } catch (e) {}
+function applyTheme() {
+  const light = theme === 'light';
+  if (light) document.documentElement.setAttribute('data-theme', 'light');
+  else document.documentElement.removeAttribute('data-theme');
+  themeBtn.textContent = light ? 'Thème sombre' : 'Thème clair';
+  themeBtn.setAttribute('aria-pressed', String(light));
+}
+applyTheme();
+themeBtn.addEventListener('click', () => {
+  theme = theme === 'light' ? 'dark' : 'light';
+  try { localStorage.setItem('theme', theme); } catch (e) {}
+  applyTheme();
+});
+
+function drawCharts() { drawGeneral(); drawMinis(); drawDeputes(); }
+function drawAll() { drawCharts(); drawPlaintes(); drawTable(); }
+document.querySelectorAll('[data-base]').forEach(b => b.addEventListener('click', () => {
+  state.base = b.dataset.base;
+  document.querySelectorAll('[data-base]').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+  drawAll();
+}));
+document.querySelectorAll('[data-grp]').forEach(b => b.addEventListener('click', () => {
+  state.grp = b.dataset.grp;
+  document.querySelectorAll('[data-grp]').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+  drawCharts();
+}));
+['f-niveau', 'f-camp'].forEach(id => document.getElementById(id).addEventListener('change', drawTable));
+document.getElementById('f-q').addEventListener('input', drawTable);
+
+drawStatic();
+drawKpis();
+initForm();
+bindTip(document.getElementById('ch-general'), tipGeneral);
+bindTip(document.getElementById('ch-deputes'), tipDeputes);
+drawAll();
+let raf = 0, lastW = 0;
+new ResizeObserver(() => {
+  const w = document.getElementById('ch-general').clientWidth;
+  if (w === lastW) return;
+  lastW = w; cancelAnimationFrame(raf); raf = requestAnimationFrame(drawCharts);
+}).observe(document.querySelector('.wrap'));
+</script>
+</body>
+</html>
