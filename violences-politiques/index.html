@@ -389,11 +389,22 @@ a:hover,a:focus-visible{color:var(--ink);text-decoration-color:currentColor}
   <ul id="m-niveaux"></ul>
   <h3>Camps</h3>
   <ul id="m-camps"></ul>
-  <p>Les noms de camps suivent l’usage courant de la presse française. Ce choix n’est neutre pour personne : le ministère de
-    l’Intérieur classe LFI à l’extrême gauche depuis février 2026, ce que LFI conteste, et le RN récuse le terme d’extrême droite,
-    qu’il a contesté devant le Conseil d’État. Les infobulles donnent ces classements officiels. « Droite radicale » n’est pas
-    un camp distinct ici : c’est le nom que la science politique anglophone donne aux partis classés « extrême droite » en France.
-    Les militants sans parti sont comptés à part, pour ne pas les assimiler aux partis.</p>
+  <p>Les noms de camps suivent l’usage français courant.</p>
+  <ul>
+    <li><b>Extrême droite</b> : le RN et ses alliés sont classés ainsi de façon constante par le ministère de l’Intérieur.
+      Le RN l’a contesté ; le Conseil d’État a rejeté son recours en 2024, comme celui de l’UDR en 2026.</li>
+    <li><b>Gauche radicale</b> : c’est ainsi que LFI était généralement qualifiée, et le ministère de l’Intérieur la classait
+      à gauche jusqu’en 2024, classement que le Conseil d’État avait aussi jugé légal. Son passage à l’« extrême gauche », aux
+      côtés de Lutte ouvrière et du NPA, par la circulaire du 2 février 2026 est une décision du ministre de l’Intérieur, qui l’a
+      justifiée par le rapport de LFI aux institutions (motions de censure répétées, critiques de la police et de la justice).
+      LFI la conteste. Le Conseil d’État n’y a pas vu d’erreur manifeste, contrôle restreint qui ne dit pas si le classement est
+      juste. La page ne reprend pas ce reclassement, décidé par un ministre partie prenante, pour la même raison qu’elle écarte
+      les chiffres du ministère.</li>
+    <li>Le terme « droite radicale » n’est pas employé : il traduit l’anglais « radical right », une branche de ce que l’anglais
+      appelle « far right », c’est-à-dire l’extrême droite.</li>
+    <li>Les militants sans parti sont comptés à part, pour ne pas les assimiler aux partis ; à droite, il s’agit de l’ultradroite
+      (identitaires, nationalistes, La Cocarde).</li>
+  </ul>
   <h3>Sources</h3>
   <ul>
     <li>Retenues : la presse, y compris engagée et les agrégateurs, signalés dans la colonne Fiabilité.</li>
@@ -578,12 +589,12 @@ const NIV_DEF = [
 
 const CAMPS = [
   { k: 'Gauche radicale', partis: 'La France insoumise (LFI).',
-    note: 'Classée à gauche par le ministère de l’Intérieur jusqu’en 2024, à l’extrême gauche par la circulaire de Laurent Nuñez du 2 février 2026. LFI conteste ce classement ; le Conseil d’État n’y a pas vu d’erreur manifeste (27 février 2026).' },
+    note: 'Généralement qualifiée de gauche radicale ; classée à gauche par le ministère de l’Intérieur jusqu’en 2024. La circulaire de Laurent Nuñez du 2 février 2026 l’a rangée pour la première fois à l’extrême gauche, avec Lutte ouvrière et le NPA, en invoquant son rapport aux institutions. LFI le conteste ; le Conseil d’État n’y a pas vu d’erreur manifeste, contrôle restreint qui ne tranche pas le fond. La page ne reprend pas ce reclassement.' },
   { k: 'Gauche', partis: 'Parti socialiste, Les Écologistes, Parti communiste ; victimes présentées comme membres du Nouveau Front populaire sans parti précisé ; autres candidats de gauche.' },
   { k: 'Centre', partis: 'Renaissance, MoDem, Horizons ; listes de centre ou de centre droit sans étiquette nationale.' },
   { k: 'Droite', partis: 'Les Républicains (LR).' },
   { k: 'Extrême droite', partis: 'Rassemblement national, UDR (Éric Ciotti, allié du RN), Reconquête.',
-    note: 'Classement du ministère de l’Intérieur, contesté par le RN puis par l’UDR ; le Conseil d’État n’y a pas vu d’erreur manifeste (2024, 2026). En science politique anglophone : droite radicale populiste.' },
+    note: 'Classés à l’extrême droite de façon constante par le ministère de l’Intérieur. Le RN l’a contesté, puis l’UDR : le Conseil d’État a rejeté les deux recours (2024, 2026).' },
   { k: 'Hors parti, gauche', partis: 'Militants sans parti : syndicats étudiants, antifascistes.',
     note: 'Comptés à part pour ne pas les assimiler à un parti.' },
   { k: 'Hors parti, droite', titre: 'Hors parti, droite (ultradroite)', partis: 'Militants sans parti : identitaires, nationalistes, syndicat étudiant La Cocarde.',
