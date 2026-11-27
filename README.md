@@ -7,6 +7,7 @@ Pages d’analyse autonomes, publiées avec GitHub Pages.
 | `arrets-maladie/` | Auto-déclaration des arrêts maladie courts : modèle interactif et modèle Excel |
 | `debat-restos-du-coeur/` | Débat présidentiel LCI/TF1 du 16 novembre 2026 aux Restos du cœur : 148 affirmations vérifiées, bilan par candidat et par thème |
 | `medias-cdjm/` | Orientation et exactitude des médias : avis du CDJM |
+| `milliardaires-impots/` | Imposition des milliardaires : comparaison harmonisée France–États-Unis, débat sur les chiffres, simulateur 2026 et taux légaux des 38 pays de l’OCDE |
 | `salaires-cout-employeur/` | Salaires nets et coût employeur : salaires Insee 2025, barèmes 2026 |
 | `violences-politiques/` | Menaces et violences visant les acteurs politiques : camp de la victime et degré de violence, page ouverte aux contributions |
 
